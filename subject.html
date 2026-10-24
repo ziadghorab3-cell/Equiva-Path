@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subjects - EquivaPath</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --bg-main: #020617;
+  --bg-section: #0f172a;
+  --card: #111827;
+  --card-hover: #162033;
+  --border: #1f2933;
+  --text: #ffffff;
+  --text-sec: #9ca3af;
+  --text-dim: #6b7280;
+  --success: #22c55e;
+  --success-bg: rgba(34,197,94,0.12);
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --warning-bg: rgba(245,158,11,0.12);
+  --purple: #8b5cf6;
+  --purple-bg: rgba(139,92,246,0.12);
+  --cyan: #06b6d4;
+  --cyan-bg: rgba(6,182,212,0.12);
+  --pink: #ec4899;
+  --pink-bg: rgba(236,72,153,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  min-height: 100vh;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-hover); }
+
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(2,6,23,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 66px;
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.nav-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 1rem;
+}
+.nav-logo span {
+  font-size: 1.4rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-r { display: flex; gap: 0.4rem; align-items: center; }
+.nav-r a {
+  color: var(--text-sec); font-weight: 500; font-size: 0.88rem;
+  padding: 0.4rem 0.8rem; border-radius: 8px;
+}
+.nav-r a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.nav-r a.act { color: var(--primary); background: rgba(59,130,246,0.1); }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 1rem; border-radius: 8px; font-weight: 600;
+  font-size: 0.85rem; border: none; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.btn-p { background: var(--primary); color: #fff; }
+.btn-p:hover { background: var(--primary-hover); color: #fff; }
+.btn-o { background: transparent; color: var(--text-sec); border: 1px solid var(--border); }
+.btn-o:hover { border-color: var(--primary); color: var(--primary); }
+.btn-d { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+.btn-d:hover { background: rgba(239,68,68,0.22); }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 86px 1.5rem 3rem; }
+
+.pg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.pg-head h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.7px; }
+.pg-head h1 em { font-style: normal; color: var(--primary); }
+.col-badge {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.3rem 0.85rem; border-radius: 8px;
+  background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25);
+  color: var(--primary); font-size: 0.82rem; font-weight: 700;
+}
+
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.tab {
+  padding: 0.55rem 1.3rem; border-radius: 10px; font-weight: 700;
+  font-size: 0.88rem; cursor: pointer; transition: all 0.2s;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-sec); font-family: inherit;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.tab:hover { border-color: var(--primary); color: var(--primary); }
+.tab.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.tab .tc { font-size: 0.75rem; opacity: 0.7; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 1.8rem;
+  display: flex; flex-direction: column;
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: linear-gradient(90deg, var(--primary), var(--purple));
+  opacity: 0; transition: opacity 0.3s;
+}
+.card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+.card:hover::before { opacity: 1; }
+
+.card-ic {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.1rem;
+  position: relative;
+}
+.card-ic i { font-size: 1.4rem; }
+
+.card-ic.ic-cyan {
+  background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(6,182,212,0.05));
+  border: 1px solid rgba(6,182,212,0.2);
+}
+.card-ic.ic-cyan i { color: #06b6d4; }
+
+.card-ic.ic-purple {
+  background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05));
+  border: 1px solid rgba(139,92,246,0.2);
+}
+.card-ic.ic-purple i { color: #8b5cf6; }
+
+.card-ic.ic-green {
+  background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05));
+  border: 1px solid rgba(34,197,94,0.2);
+}
+.card-ic.ic-green i { color: #22c55e; }
+
+.card-ic.ic-yellow {
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+  border: 1px solid rgba(245,158,11,0.2);
+}
+.card-ic.ic-yellow i { color: #f59e0b; }
+
+.card-ic.ic-blue {
+  background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05));
+  border: 1px solid rgba(59,130,246,0.2);
+}
+.card-ic.ic-blue i { color: #3b82f6; }
+
+.card-ic.ic-pink {
+  background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.08));
+  border: 1px solid rgba(236,72,153,0.2);
+}
+.card-ic.ic-pink i { color: #ec4899; }
+
+.card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem; }
+.card p { color: var(--text-sec); font-size: 0.85rem; line-height: 1.5; flex: 1; margin-bottom: 1.2rem; }
+.card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.ctag {
+  font-size: 0.68rem; padding: 0.18rem 0.55rem; border-radius: 6px;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.ctag.blue { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: var(--primary); }
+.ctag.green { background: var(--success-bg); border: 1px solid rgba(34,197,94,0.2); color: var(--success); }
+.ctag.yellow { background: var(--warning-bg); border: 1px solid rgba(245,158,11,0.2); color: var(--warning); }
+.ctag.purple { background: var(--purple-bg); border: 1px solid rgba(139,92,246,0.2); color: var(--purple); }
+.ctag.cyan { background: var(--cyan-bg); border: 1px solid rgba(6,182,212,0.2); color: var(--cyan); }
+.card .btn { align-self: flex-start; }
+
+.toast-c { position: fixed; top: 78px; right: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 0.4rem; }
+.toast { padding: 0.7rem 1.1rem; border-radius: 9px; font-size: 0.85rem; font-weight: 500; animation: ti 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.4); max-width: 340px; }
+.toast.ok { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+.toast.err { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+.toast.inf { background: rgba(59,130,246,0.15); color: var(--primary); border: 1px solid rgba(59,130,246,0.3); }
+@keyframes ti { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .wrap { padding: 78px 1rem 2rem; }
+  .pg-head h1 { font-size: 1.4rem; }
+  .tabs { flex-wrap: wrap; }
+  .nav-r a { padding: 0.3rem 0.5rem; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <i class="fa-solid fa-graduation-cap"></i>
+    </div>
+    <span>EquivaPath</span>
+  </a>
+  <div class="nav-r">
+    <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="subject.html" class="act"><i class="fa-solid fa-book-open"></i> Subjects</a>
+    <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+    <button class="btn btn-d" onclick="localStorage.clear();location.href='index.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </div>
+</nav>
+
+<div class="toast-c" id="TC"></div>
+
+<div class="wrap">
+
+  <div class="pg-head">
+    <h1>My <em>Subjects</em></h1>
+    <span class="col-badge" id="colBadge"><i class="fa-solid fa-gear"></i> Engineering Program</span>
+  </div>
+
+  <div class="tabs" id="tabsRow">
+    <button class="tab" id="tabEng" onclick="switchTab('Engineering')">
+      <i class="fa-solid fa-gear"></i> Engineering<span class="tc">(6)</span>
+    </button>
+    <button class="tab" id="tabComp" onclick="switchTab('Computers')">
+      <i class="fa-solid fa-laptop-code"></i> Computers<span class="tc">(4)</span>
+    </button>
+    <button class="tab" id="tabAI" onclick="switchTab('AI')">
+      <i class="fa-solid fa-robot"></i> AI<span class="tc">(4)</span>
+    </button>
+    <button class="tab" id="tabTour" onclick="switchTab('Tourism')">
+      <i class="fa-solid fa-plane"></i> Tourism<span class="tc">(3)</span>
+    </button>
+    <button class="tab" id="tabMng" onclick="switchTab('MngTech')">
+      <i class="fa-solid fa-network-wired"></i> Mng Tech<span class="tc">(4)</span>
+    </button>
+    <button class="tab" id="tabEdu" onclick="switchTab('Education')">
+      <i class="fa-solid fa-chalkboard-user"></i> Education<span class="tc">(3)</span>
+    </button>
+    <button class="tab" id="tabComm" onclick="switchTab('Commerce')">
+      <i class="fa-solid fa-scale-balanced"></i> Commerce<span class="tc">(4)</span>
+    </button>
+  </div>
+
+  <!-- ENGINEERING SUBJECTS -->
+  <div class="grid" id="engGrid">
+    <div class="card">
+      <div class="card-ic ic-cyan"><i class="fa-solid fa-atom"></i></div>
+      <h3>Physics</h3>
+      <p>Mechanics, Thermodynamics, and Electromagnetism.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-physics.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-green"><i class="fa-solid fa-flask"></i></div>
+      <h3>Chemistry</h3>
+      <p>General chemistry, organic chemistry, atomic structure.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-chemistry.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-yellow"><i class="fa-solid fa-wrench"></i></div>
+      <h3>Mechanics</h3>
+      <p>Statics, Dynamics, and Strength of Materials.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Mechanics.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-purple"><i class="fa-solid fa-pen-fancy"></i></div>
+      <h3>English</h3>
+      <p>Academic writing, grammar fundamentals, communication skills.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-English.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-blue"><i class="fa-solid fa-square-root-variable"></i></div>
+      <h3>Calculus</h3>
+      <p>Differentiation, integration, limits, and continuity.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Calculus.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-pink"><i class="fa-solid fa-shapes"></i></div>
+      <h3>Algebra & Descriptive Geometry</h3>
+      <p>Linear algebra, matrices, vector spaces, spatial geometry.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Algebra and Descriptive Geometry.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- COMPUTERS SUBJECTS -->
+  <div class="grid" id="compGrid" style="display:none">
+    <div class="card">
+      <div class="card-ic ic-cyan"><i class="fa-solid fa-atom"></i></div>
+      <h3>Physics</h3>
+      <p>Physical laws governing engineering systems.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-physics.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-purple"><i class="fa-solid fa-pen-fancy"></i></div>
+      <h3>English</h3>
+      <p>Technical writing, presentation skills, email etiquette.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="#" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-blue"><i class="fa-solid fa-square-root-variable"></i></div>
+      <h3>Calculus</h3>
+      <p>Calculus applications in solving computational problems.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Calculus.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-pink"><i class="fa-solid fa-shapes"></i></div>
+      <h3>Algebra & Descriptive Geometry</h3>
+      <p>Linear algebra, vector spaces, and 3D reasoning.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Algebra and Descriptive Geometry.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- AI SUBJECTS -->
+  <div class="grid" id="aiGrid" style="display:none">
+    <div class="card">
+      <div class="card-ic ic-pink"><i class="fa-solid fa-shapes"></i></div>
+      <h3>Algebra & Descriptive Geometry</h3>
+      <p>الجبر والهندسة الفراغية - Linear algebra, matrices, vector spaces essential for ML.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Algebra and Descriptive Geometry.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-blue"><i class="fa-solid fa-square-root-variable"></i></div>
+      <h3>Calculus</h3>
+      <p>التفاضل والتكامل - Differentiation, integration, limits, and continuity for AI.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-Calculus.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-cyan"><i class="fa-solid fa-atom"></i></div>
+      <h3>Physics</h3>
+      <p>الفيزياء - Mechanics, electromagnetism, and physical computing concepts.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-physics.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-purple"><i class="fa-solid fa-pen-fancy"></i></div>
+      <h3>English</h3>
+      <p>اللغة الإنجليزية - Technical writing, research paper reading, AI terminology.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">8 Question Banks</span>
+      </div>
+      <a href="subject-details-English.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- TOURISM SUBJECTS -->
+  <div class="grid" id="tourismGrid" style="display:none">
+    <div class="card">
+      <div class="card-ic ic-purple"><i class="fa-solid fa-pen-fancy"></i></div>
+      <h3>English</h3>
+      <p>اللغة الإنجليزية - Specialized English vocabulary for travel and hospitality.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">5 Question Banks</span>
+      </div>
+      <a href="subject-details-English.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-pink"><i class="fa-solid fa-pen-nib"></i></div>
+      <h3>French</h3>
+      <p>اللغة الفرنسية - French language skills for tourism and hotel communication.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">5 Question Banks</span>
+      </div>
+      <a href="subject-details-French.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-yellow"><i class="fa-solid fa-hotel"></i></div>
+      <h3>Specialized Hotel Studies</h3>
+      <p>الدراسات الفندقية المتخصصة - Includes housekeeping, kitchen, restaurant, and hotel management based on the specialization.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">5 Question Banks</span>
+      </div>
+      <a href="subject-details-Specialized-Hotel-Studies.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- MNG TECH SUBJECTS -->
+  <div class="grid" id="mngTechGrid" style="display:none">
+    <div class="card">
+      <div class="card-ic ic-pink"><i class="fa-solid fa-shapes"></i></div>
+      <h3>Algebra & Descriptive Geometry</h3>
+      <p>الجبر والهندسة الفراغية - Linear algebra, matrices, vector spaces.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">6 Question Banks</span>
+      </div>
+      <a href="subject-details-Algebra and Descriptive Geometry.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-blue"><i class="fa-solid fa-square-root-variable"></i></div>
+      <h3>Calculus</h3>
+      <p>التفاضل والتكامل - Differentiation, integration, limits, and continuity.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">6 Question Banks</span>
+      </div>
+      <a href="subject-details-Calculus.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-cyan"><i class="fa-solid fa-atom"></i></div>
+      <h3>Physics</h3>
+      <p>الفيزياء - Mechanics, electromagnetism, and physical laws.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">6 Question Banks</span>
+      </div>
+      <a href="subject-details-Physics.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-purple"><i class="fa-solid fa-pen-fancy"></i></div>
+      <h3>English</h3>
+      <p>اللغة الإنجليزية - Technical writing, presentation skills, business communication.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">6 Question Banks</span>
+      </div>
+      <a href="subject-details-English.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- EDUCATION SUBJECTS -->
+  <div class="grid" id="eduGrid" style="display:none">
+    <div class="card">
+      <div class="card-ic ic-green"><i class="fa-solid fa-book-quran"></i></div>
+      <h3>Arabic</h3>
+      <p>اللغة العربية - Arabic grammar, rhetoric, literature, and linguistic skills.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">7 Question Banks</span>
+      </div>
+      <a href="subject-details-Arabic.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-blue"><i class="fa-solid fa-language"></i></div>
+      <h3>English</h3>
+      <p>اللغة الإنجليزية - English language proficiency, communication and teaching skills.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">7 Question Banks</span>
+      </div>
+      <a href="subject-details-English.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-yellow"><i class="fa-solid fa-clipboard-check"></i></div>
+      <h3>Educational & Professional Aptitude Test</h3>
+      <p>اختبار قدرات تربوية أو مهارية - Testing educational and professional skills (Commercial students are tested in commercial subjects).</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">4 Videos</span>
+        <span class="ctag yellow">7 Question Banks</span>
+      </div>
+      <a href="subject-details-Educational-Professional-Aptitude-Test.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+  <!-- COMMERCE SUBJECTS -->
+  <div class="grid" id="commGrid" style="display:none">
+    <div class="card">
+      <div class="card-ic ic-green"><i class="fa-solid fa-futbol"></i></div>
+      <h3>Sports</h3>
+      <p>الرياضة - Physical education, fitness fundamentals, and sports science.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">9 Question Banks</span>
+      </div>
+      <a href="subject-details-Sports.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-cyan"><i class="fa-solid fa-earth-americas"></i></div>
+      <h3>Geography</h3>
+      <p>الجغرافيا - Physical and human geography, map reading, and environmental studies.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">9 Question Banks</span>
+      </div>
+      <a href="subject-details-Geography.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-purple"><i class="fa-solid fa-pen-fancy"></i></div>
+      <h3>First Language (English)</h3>
+      <p>اللغة الأولى (إنجليزي) - Advanced English grammar, writing, and comprehension skills.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">9 Question Banks</span>
+      </div>
+      <a href="subject-details-English.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <div class="card">
+      <div class="card-ic ic-pink"><i class="fa-solid fa-pen-nib"></i></div>
+      <h3>Second Language (French)</h3>
+      <p>اللغة الثانية (فرنسي) - French grammar, vocabulary, and communication skills.</p>
+      <div class="card-tags">
+        <span class="ctag blue">1 PDF</span>
+        <span class="ctag cyan">3 Videos</span>
+        <span class="ctag yellow">9 Question Banks</span>
+      </div>
+      <a href="subject-details-French.html" class="btn btn-p">Open Subject <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toast(m,t){
+  var c=document.getElementById('TC');
+  var d=document.createElement('div');
+  d.className='toast '+(t||'inf');
+  d.textContent=m;
+  c.appendChild(d);
+  setTimeout(function(){d.remove()},3500);
+}
+
+function switchTab(col){
+  document.getElementById('engGrid').style.display='none';
+  document.getElementById('compGrid').style.display='none';
+  document.getElementById('aiGrid').style.display='none';
+  document.getElementById('tourismGrid').style.display='none';
+  document.getElementById('mngTechGrid').style.display='none';
+  document.getElementById('eduGrid').style.display='none';
+  document.getElementById('commGrid').style.display='none';
+
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('on'));
+
+  const badge = document.getElementById('colBadge');
+
+  if(col==='Engineering'){
+    document.getElementById('engGrid').style.display='grid';
+    document.getElementById('tabEng').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-gear"></i> Engineering Program';
+  } else if(col==='Computers'){
+    document.getElementById('compGrid').style.display='grid';
+    document.getElementById('tabComp').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-laptop-code"></i> Computers Program';
+  } else if(col==='AI'){
+    document.getElementById('aiGrid').style.display='grid';
+    document.getElementById('tabAI').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-robot"></i> AI Program';
+  } else if(col==='Tourism'){
+    document.getElementById('tourismGrid').style.display='grid';
+    document.getElementById('tabTour').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-plane"></i> Tourism Program';
+  } else if(col==='MngTech'){
+    document.getElementById('mngTechGrid').style.display='grid';
+    document.getElementById('tabMng').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-network-wired"></i> Mng Tech Program';
+  } else if(col==='Education'){
+    document.getElementById('eduGrid').style.display='grid';
+    document.getElementById('tabEdu').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-chalkboard-user"></i> Education Program';
+  } else if(col==='Commerce'){
+    document.getElementById('commGrid').style.display='grid';
+    document.getElementById('tabComm').classList.add('on');
+    badge.innerHTML='<i class="fa-solid fa-scale-balanced"></i> Commerce Program';
+  }
+
+  localStorage.setItem('equivapath_college',col);
+}
+
+try {
+  var saved = localStorage.getItem('equivapath_college') || '';
+  var targetTab = 'Engineering';
+
+  if (saved) {
+    if (saved.includes('Management Technology')) {
+        targetTab = 'MngTech';
+    } else if (saved.includes('Tourism')) {
+        targetTab = 'Tourism';
+    } else if (saved.includes('Education')) {
+        targetTab = 'Education';
+    } else if (saved.includes('Commerce') && !saved.includes('Business')) {
+        targetTab = 'Commerce';
+    } else if (saved === 'AI') {
+        targetTab = 'AI';
+    } else if (saved.includes('Computing') || saved.includes('Computer Science')) {
+        targetTab = 'Computers';
+    } else if (saved.includes('Engineering')) {
+        targetTab = 'Engineering';
+    }
+  }
+
+  if(targetTab) switchTab(targetTab);
+
+} catch(e){}
+</script>
+
+</body>
+</html>

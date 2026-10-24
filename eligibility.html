@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Eligibility - EquivaPath</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-glow: rgba(59,130,246,0.25);
+    --bg-main: #020617;
+    --bg-section: #0f172a;
+    --card: #111827;
+    --card-hover: #1a2332;
+    --border: #1e293b;
+    --border-active: #334155;
+    --text: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --success: #22c55e;
+    --success-glow: rgba(34,197,94,0.15);
+    --danger: #ef4444;
+    --danger-glow: rgba(239,68,68,0.15);
+    --warning: #f59e0b;
+    --warning-glow: rgba(245,158,11,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-main);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .bg-glow {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bg-glow::before {
+    content: ''; position: absolute;
+    width: 600px; height: 600px;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+    animation: pulseGlow 6s ease-in-out infinite;
+  }
+  .bg-glow::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    bottom: -100px; right: -100px;
+    background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
+    animation: pulseGlow 8s ease-in-out infinite reverse;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+  }
+
+  a { color: var(--primary); text-decoration: none; }
+
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(2,6,23,0.8); backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 70px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem;
+  }
+  .nav-logo span {
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 0.25rem; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); font-weight: 500; font-size: 0.9rem;
+    padding: 0.45rem 1rem; border-radius: 8px;
+    transition: all 0.25s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.65rem 1.5rem; border-radius: 10px; font-weight: 600;
+    font-size: 0.9rem; font-family: inherit; border: none; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+  }
+  .btn::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .btn:hover::after { opacity: 1; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), #4f46e5);
+    color: #fff;
+    box-shadow: 0 0 24px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 40px rgba(59,130,246,0.4), 0 8px 24px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-success {
+    background: linear-gradient(135deg, var(--success), #16a34a);
+    color: #fff;
+    box-shadow: 0 0 20px var(--success-glow), 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .btn-success:hover {
+    box-shadow: 0 0 35px rgba(34,197,94,0.3), 0 8px 24px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+  .btn-ghost {
+    background: transparent; color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--primary); color: var(--primary); background: rgba(59,130,246,0.05); }
+  .btn-lg { padding: 0.9rem 2rem; font-size: 1rem; border-radius: 12px; }
+  .btn-full { width: 100%; }
+  .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; border-radius: 8px; }
+  .btn i { font-size: 0.9rem; }
+
+  .page-container {
+    max-width: 680px; margin: 0 auto; padding: 120px 1.5rem 5rem;
+    position: relative; z-index: 1;
+  }
+
+  .page-header { margin-bottom: 2.5rem; }
+  .page-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.35rem 0.9rem; border-radius: 50px;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+    color: var(--primary); font-size: 0.78rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 1.25rem;
+  }
+  .page-badge i { font-size: 0.75rem; }
+  .page-title {
+    font-size: 2.2rem; font-weight: 900; letter-spacing: -0.8px;
+    line-height: 1.2; margin-bottom: 0.75rem;
+  }
+  .page-title span {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .page-desc {
+    color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7;
+  }
+
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), #8b5cf6, transparent);
+    opacity: 0.6;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .form-group { margin-bottom: 1.5rem; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    display: flex; align-items: center; gap: 0.4rem;
+    margin-bottom: 0.55rem; font-weight: 600; font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .form-label i { font-size: 0.8rem; color: var(--text-muted); }
+  .form-input, .form-select {
+    width: 100%; padding: 0.8rem 1rem 0.8rem 2.75rem;
+    border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg-main); color: var(--text);
+    font-size: 0.95rem; font-family: inherit;
+    transition: all 0.3s; appearance: none;
+  }
+  .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 5.646a.5.5 0 0 1 .708 0L8 8.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+  .form-select option { background: var(--card); color: var(--text); }
+  .input-wrapper { position: relative; }
+  .input-icon {
+    position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); pointer-events: none;
+    transition: color 0.3s;
+  }
+  .input-icon i { font-size: 0.95rem; }
+  .input-wrapper:focus-within .input-icon { color: var(--primary); }
+  .form-input:focus, .form-select:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  .form-hint {
+    margin-top: 0.4rem; font-size: 0.78rem; color: var(--text-muted);
+    transition: color 0.3s;
+  }
+  .form-hint.error { color: var(--danger); }
+  .form-hint.valid { color: var(--success); }
+  .form-divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 1.75rem 0;
+  }
+
+  .loading { text-align: center; padding: 2.5rem 1rem; }
+  .spinner-wrap {
+    width: 56px; height: 56px; margin: 0 auto 1.25rem;
+    position: relative;
+  }
+  .spinner-ring {
+    width: 100%; height: 100%;
+    border: 3px solid var(--border); border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 0.8s linear infinite;
+    position: absolute;
+  }
+  .spinner-ring:nth-child(2) {
+    width: 70%; height: 70%; top: 15%; left: 15%;
+    border-top-color: #8b5cf6;
+    animation-direction: reverse; animation-duration: 1.2s;
+  }
+  .spinner-ring:nth-child(3) {
+    width: 40%; height: 40%; top: 30%; left: 30%;
+    border-top-color: #06b6d4;
+    animation-duration: 0.6s;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--text-secondary); font-size: 0.95rem; font-weight: 500; }
+
+  .result-area { margin-top: 2rem; display: none; animation: fadeUp 0.5s ease; }
+  .result-area.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-banner {
+    padding: 1.25rem 1.5rem; border-radius: 14px;
+    display: flex; align-items: flex-start; gap: 0.85rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.4s ease;
+  }
+  .result-banner.success {
+    background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.03));
+    border: 1px solid rgba(34,197,94,0.2);
+  }
+  .result-banner.fail {
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03));
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+  .result-banner-icon {
+    flex-shrink: 0; width: 42px; height: 42px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  }
+  .result-banner-icon i { font-size: 1.15rem; }
+  .result-banner.success .result-banner-icon { background: rgba(34,197,94,0.15); color: var(--success); }
+  .result-banner.fail .result-banner-icon { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .result-banner-text h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .result-banner.success .result-banner-text h3 { color: var(--success); }
+  .result-banner.fail .result-banner-text h3 { color: var(--danger); }
+  .result-banner-text p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+  .result-banner-text strong { color: var(--text); }
+
+  .college-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .college-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem 1.5rem;
+    text-align: center; cursor: default;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+  }
+  .college-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--primary), #8b5cf6);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .college-card:hover {
+    border-color: rgba(59,130,246,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(59,130,246,0.12), 0 4px 16px rgba(0,0,0,0.3);
+    background: var(--card-hover);
+  }
+  .college-card:hover::before { opacity: 1; }
+  .college-icon-wrap {
+    width: 64px; height: 64px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem; position: relative;
+    transition: all 0.3s;
+  }
+  .college-icon-wrap i { font-size: 1.5rem; position: relative; z-index: 1; }
+  .college-icon-wrap::after {
+    content: ''; position: absolute; inset: 0; border-radius: 16px;
+    opacity: 0.15; transition: opacity 0.3s;
+  }
+  .college-card:nth-child(1) .college-icon-wrap { background: rgba(59,130,246,0.1); color: var(--primary); }
+  .college-card:nth-child(1) .college-icon-wrap::after { background: var(--primary); }
+  .college-card:nth-child(2) .college-icon-wrap { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+  .college-card:nth-child(2) .college-icon-wrap::after { background: #8b5cf6; }
+  .college-card:nth-child(3) .college-icon-wrap { background: rgba(6,182,212,0.1); color: #06b6d4; }
+  .college-card:nth-child(3) .college-icon-wrap::after { background: #06b6d4; }
+  .college-card:nth-child(4) .college-icon-wrap { background: rgba(245,158,11,0.1); color: #f59e0b; }
+  .college-card:nth-child(4) .college-icon-wrap::after { background: #f59e0b; }
+  .college-card:nth-child(5) .college-icon-wrap { background: rgba(236,72,153,0.1); color: #ec4899; }
+  .college-card:nth-child(5) .college-icon-wrap::after { background: #ec4899; }
+  .college-card:nth-child(6) .college-icon-wrap { background: rgba(34,197,94,0.1); color: #22c55e; }
+  .college-card:nth-child(6) .college-icon-wrap::after { background: #22c55e; }
+  .college-card:nth-child(7) .college-icon-wrap { background: rgba(249,115,22,0.1); color: #f97316; }
+  .college-card:nth-child(7) .college-icon-wrap::after { background: #f97316; }
+  .college-card:nth-child(8) .college-icon-wrap { background: rgba(168,85,247,0.1); color: #a855f7; }
+  .college-card:nth-child(8) .college-icon-wrap::after { background: #a855f7; }
+  .college-card:hover .college-icon-wrap { transform: scale(1.08); }
+  .college-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.4rem; letter-spacing: -0.3px; }
+  .college-card .subjects {
+    color: var(--text-muted); font-size: 0.75rem; line-height: 1.6;
+    margin-bottom: 1.25rem; min-height: 40px;
+  }
+  .college-card-actions {
+    display: flex; gap: 0.5rem; justify-content: center; align-items: center;
+  }
+  .btn-info {
+    background: rgba(59,130,246,0.08); color: var(--primary);
+    border: 1px solid rgba(59,130,246,0.2);
+    padding: 0.45rem 0.85rem; border-radius: 8px;
+    font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all 0.25s;
+    display: inline-flex; align-items: center; gap: 0.35rem;
+  }
+  .btn-info:hover {
+    background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4);
+    transform: translateY(-1px);
+  }
+
+  /* ═══════════════════════════════════════════
+     Modal — College Details
+     ═══════════════════════════════════════════ */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(2,6,23,0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem; opacity: 0; visibility: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 22px; width: 100%; max-width: 580px;
+    max-height: 85vh; overflow: hidden;
+    display: flex; flex-direction: column;
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(59,130,246,0.08);
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-header {
+    padding: 1.75rem 2rem 1.25rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 1rem; flex-shrink: 0;
+    position: relative;
+  }
+  .modal-header::after {
+    content: ''; position: absolute; bottom: -1px; left: 2rem; right: 2rem; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), #8b5cf6, transparent);
+    opacity: 0.4;
+  }
+  .modal-college-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 1.3rem;
+  }
+  .modal-college-info { flex: 1; }
+  .modal-college-info h2 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 0.2rem; }
+  .modal-college-info p { font-size: 0.82rem; color: var(--text-muted); }
+  .modal-close {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--text-muted); cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; transition: all 0.2s; margin-top: 0.15rem;
+  }
+  .modal-close:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+
+  .modal-body {
+    padding: 1.25rem 2rem; overflow-y: auto; flex: 1;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .modal-body::-webkit-scrollbar { width: 5px; }
+  .modal-body::-webkit-scrollbar-track { background: transparent; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .info-section {
+    margin-bottom: 1.25rem; padding: 1.1rem 1.2rem;
+    background: var(--bg-section); border: 1px solid var(--border);
+    border-radius: 14px; animation: fadeUp 0.3s ease both;
+  }
+  .info-section:last-child { margin-bottom: 0; }
+  .info-section:nth-child(2) { animation-delay: 0.05s; }
+  .info-section:nth-child(3) { animation-delay: 0.1s; }
+  .info-section:nth-child(4) { animation-delay: 0.15s; }
+
+  .info-section-header {
+    display: flex; align-items: center; gap: 0.55rem;
+    margin-bottom: 0.75rem;
+  }
+  .info-section-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; flex-shrink: 0;
+  }
+  .info-section-title {
+    font-size: 0.82rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  .info-list { list-style: none; }
+  .info-list li {
+    display: flex; align-items: flex-start; gap: 0.55rem;
+    padding: 0.45rem 0; font-size: 0.86rem; line-height: 1.55;
+    color: var(--text-secondary); border-bottom: 1px solid rgba(30,41,59,0.5);
+  }
+  .info-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-list li:first-child { padding-top: 0; }
+  .info-list li i {
+    margin-top: 0.3rem; font-size: 0.55rem; flex-shrink: 0;
+  }
+  .info-list li strong { color: var(--text); font-weight: 600; }
+
+  .info-cost-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+  }
+  .info-cost-item {
+    padding: 0.85rem 1rem; background: var(--bg-main);
+    border: 1px solid rgba(30,41,59,0.5); border-radius: 10px;
+  }
+  .info-cost-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 0.3rem; }
+  .info-cost-value { font-size: 1.05rem; font-weight: 800; }
+  .info-cost-value.green { color: var(--success); }
+  .info-cost-value.blue { color: var(--primary); }
+  .info-cost-value.yellow { color: var(--warning); }
+  .info-cost-note {
+    grid-column: 1 / -1; font-size: 0.75rem; color: var(--text-muted);
+    padding-top: 0.25rem; line-height: 1.5; font-style: italic;
+  }
+
+  .info-council {
+    padding: 0.9rem 1rem; background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.15); border-radius: 10px;
+    font-size: 0.84rem; color: var(--text-secondary); line-height: 1.65;
+  }
+  .info-council strong { color: var(--warning); }
+
+  .modal-footer {
+    padding: 1.25rem 2rem 1.75rem; border-top: 1px solid var(--border);
+    display: flex; gap: 0.75rem; flex-shrink: 0;
+  }
+  .modal-footer .btn { flex: 1; }
+
+  .toast-container {
+    position: fixed; top: 85px; right: 20px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+  .toast {
+    padding: 0.9rem 1.3rem; border-radius: 12px;
+    font-size: 0.88rem; font-weight: 500; font-family: inherit;
+    display: flex; align-items: center; gap: 0.6rem;
+    animation: toastIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+  }
+  .toast i { font-size: 1rem; flex-shrink: 0; }
+  .toast.success { background: rgba(34,197,94,0.12); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
+  .toast.error { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+  @keyframes toastIn {
+    from { transform: translateX(120px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @media (max-width: 600px) {
+    .college-cards { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .page-title { font-size: 1.7rem; }
+    .form-card { padding: 1.75rem; }
+    .nav-links a { padding: 0.4rem 0.6rem; font-size: 0.82rem; }
+    .modal { max-height: 90vh; border-radius: 18px; }
+    .modal-header, .modal-body, .modal-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .info-cost-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(5px); }
+    45% { transform: translateX(-4px); }
+    60% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+    90% { transform: translateX(1px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <span>EquivaPath</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+    <a href="register.html"><i class="fa-solid fa-user-plus"></i> Register</a>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════
+     Modal — College Details
+     ═══════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-college-icon" id="modalIcon"></div>
+      <div class="modal-college-info">
+        <h2 id="modalTitle"></h2>
+        <p id="modalSubtitle"></p>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modalBack"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <button class="btn btn-success" id="modalSelect"><i class="fa-solid fa-check"></i> Confirm Selection</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-badge"><i class="fa-solid fa-magnifying-glass-chart"></i> Eligibility Check</div>
+    <h1 class="page-title">Check Your <span>Eligibility</span></h1>
+    <p class="page-desc">Enter your diploma information to discover which university programs you qualify for.</p>
+  </div>
+
+  <div class="form-card">
+    <form id="eligibilityForm" novalidate>
+      <div class="form-group full">
+        <label class="form-label"><i class="fa-solid fa-graduation-cap"></i> Diploma Type</label>
+        <div class="input-wrapper">
+          <span class="input-icon"><i class="fa-solid fa-school"></i></span>
+          <select id="diplomaType" class="form-select" required>
+            <option value="">Select your diploma school</option>
+            <option value="WE">WE School</option>
+            <option value="Elsweedy">Elsweedy School</option>
+            <option value="Commercial">Commercial School</option>
+            <option value="Industrial">Industrial School</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label"><i class="fa-solid fa-calendar-days"></i> Graduation Year</label>
+          <div class="input-wrapper">
+            <span class="input-icon"><i class="fa-regular fa-calendar"></i></span>
+            <input type="number" id="gradYear" class="form-input" min="2024" max="2025" placeholder="2024" required>
+          </div>
+          <div class="form-hint" id="yearHint">Eligibility is only for 2024 & 2025 graduates</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label"><i class="fa-solid fa-percent"></i> Grade (%)</label>
+          <div class="input-wrapper">
+            <span class="input-icon"><i class="fa-solid fa-chart-column"></i></span>
+            <input type="number" id="grade" class="form-input" min="0" max="100" step="0.1" placeholder="e.g. 70" required>
+          </div>
+          <div class="form-hint" id="gradeHint">Select your school to see requirements</div>
+        </div>
+      </div>
+      <hr class="form-divider">
+      <button type="submit" class="btn btn-primary btn-full btn-lg" id="checkBtn">
+        <i class="fa-solid fa-magnifying-glass"></i> Check Eligibility
+      </button>
+    </form>
+
+    <div id="loadingArea" class="loading" style="display:none">
+      <div class="spinner-wrap">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="loading-text">Analyzing your eligibility...</p>
+    </div>
+
+    <div id="resultArea" class="result-area">
+      <div id="resultBanner" class="result-banner"></div>
+      <div id="collegeCards" class="college-cards"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   بيانات الكليات التفصيلية — شروط التغديم و المصاريف و المجلس الأعلى
+   ═══════════════════════════════════════════════════════ */
+var COLLEGE_DETAILS = {
+  "Engineering": {
+    icon: "fa-gear",
+    color: "#3b82f6",
+    bg: "rgba(59,130,246,0.1)",
+    brd: "rgba(59,130,246,0.2)",
+    subtitle: "هندسة — تكافؤ دبلوم فني",
+    conditions: [
+      "الحصول على <strong>70% فأكثر</strong> في الشهادة الفنية",
+      "اجتياز امتحانات القبول في <strong>6 مواد</strong>: فيزياء، كيمياء، ميكانيكا، إنجليزي، تفاضل وتكامل، جبر وهندسة فراغية",
+      "الحد الأدنى للنجاح في كل مادة <strong>60%</strong> (من 100 درجة)",
+      "يجب اجتياز <strong>جميع المواد</strong> خلال مدة لا تتجاوز 3 سنوات من تاريخ القبول",
+      "لا يُسمح بإعادة امتحان المادة أكثر من <strong>مرتين</strong>"
+    ],
+    needs: [
+      "صورة شهادة الدبلوم الفني <strong>معتمدة أصلية</strong>",
+      "كشف درجات الدبلوم <strong>مصدق</strong> من الإدارة التعليمية",
+      "صورة بطاقة الرقم القومي <strong>سارية</strong>",
+      "<strong>4 صور شخصية</strong> خلفية بيضاء",
+      "ملف القبول مستوفى من الجامعة المستهدفة",
+      "شهادة ميلاد حديثة الاستخراج"
+    ],
+    costs: {
+      firstYear: "8,500 — 12,000",
+      annual: "7,000 — 10,000",
+      exams: "1,500 — 2,500",
+      note: "المصاريف تختلف حسب الجامعة (حكومية / خاصة). المصاريف المذكورة للجامعات الحكومية تقريباً."
+    },
+    council: "المجلس الأعلى للجامعات يُقر بتكافؤ الدبلوم الفني (3 سنوات) مع السنة الأولى بكلية الهندسة فقط. الطالب يبدأ من <strong>الفرقة الثانية</strong> بعد اجتياز الامتحانات بنجاح. لا يُمنح الطالب لقب مهندس إلا بعد إتمام باقي سنوات الدراسة."
+  },
+
+  "Computer Science / Computing": {
+    icon: "fa-laptop-code",
+    color: "#8b5cf6",
+    bg: "rgba(139,92,246,0.1)",
+    brd: "rgba(139,92,246,0.2)",
+    subtitle: "حاسبات ومعلومات — تكافؤ دبلوم فني",
+    conditions: [
+      "الحصول على <strong>70% فأكثر</strong> في الشهادة الفنية",
+      "اجتياز امتحانات القبول في <strong>4 مواد</strong>: جبر وهندسة وصفيه، تفاضل وتكامل، إنجليزي، فيزياء",
+      "الحد الأدنى للنجاح في كل مادة <strong>60%</strong>",
+      "يجب اجتياز جميع المواد خلال <strong>3 سنوات</strong> كحد أقصى",
+      "لا يُسمح بإعادة الامتحان أكثر من <strong>مرتين</strong> لكل مادة"
+    ],
+    needs: [
+      "صورة شهادة الدبلوم الفني <strong>معتمدة أصلية</strong>",
+      "كشف درجات <strong>مصدق</strong> من الإدارة التعليمية",
+      "صورة بطاقة الرقم القومي <strong>سارية</strong>",
+      "<strong>4 صور شخصية</strong> خلفية بيضاء",
+      "ملف القبول مستوفى من الجامعة",
+      "شهادة ميلاد حديثة"
+    ],
+    costs: {
+      firstYear: "7,500 — 10,000",
+      annual: "6,500 — 9,000",
+      exams: "1,200 — 2,000",
+      note: "المصاريف للجامعات الحكومية. الجامعات الخاصة قد تصل إلى 25,000 — 45,000 جنيه سنوياً."
+    },
+    council: "المجلس الأعلى يُقر بتكافؤ الدبلوم الفني (3 سنوات) مع السنة الأولى بكلية الحاسبات. الطالب يلتحق بـ <strong>الفرقة الثانية</strong> مباشرة بعد النجاح في امتحانات التكافؤ."
+  },
+
+  "AI": {
+    icon: "fa-robot",
+    color: "#06b6d4",
+    bg: "rgba(6,182,212,0.1)",
+    brd: "rgba(6,182,212,0.2)",
+    subtitle: "ذكاء اصطناعي — تكافؤ دبلوم فني",
+    conditions: [
+      "الحصول على <strong>70% فأكثر</strong> في الشهادة الفنية",
+      "اجتياز امتحانات القبول في <strong>4 مواد</strong>: جبر وهندسة وصفيه، تفاضل وتكامل، إنجليزي، فيزياء",
+      "الحد الأدنى للنجاح في كل مادة <strong>60%</strong>",
+      "مدة اجتياز الامتحانات <strong>3 سنوات كحد أقصى</strong>",
+      "الذكاء الاصطناعي كليّة حديثة وقد لا تتوفر في كل الجامعات — تأكد من توفرها"
+    ],
+    needs: [
+      "صورة شهادة الدبلوم الفني <strong>معتمدة</strong>",
+      "كشف درجات <strong>مصدق</strong> من الإدارة التعليمية",
+      "صورة بطاقة الرقم القومي",
+      "<strong>4 صور شخصية</strong>",
+      "ملف القبول من الجامعة",
+      "شهادة ميلاد"
+    ],
+    costs: {
+      firstYear: "8,000 — 12,000",
+      annual: "7,000 — 11,000",
+      exams: "1,500 — 2,200",
+      note: "كلية الذكاء الاصطناعي متاحة في جامعات محددة. المصاريف قد تكون أعلى قليلاً من الحاسبات التقليدية."
+    },
+    council: "المجلس الأعلى للجامعات أقرّ كلية الذكاء الاصطناعي كتخصص مستقل حديثاً. شروط التكافؤ مشابهة لكلية الحاسبات — الدبلوم يعادل <strong>السنة الأولى</strong> ويلتحق الطالب بالفرقة الثانية."
+  },
+
+  "Tourism and Hotels": {
+    icon: "fa-plane",
+    color: "#f59e0b",
+    bg: "rgba(245,158,11,0.1)",
+    brd: "rgba(245,158,11,0.2)",
+    subtitle: "سياحة وفنادق — تكافؤ دبلوم تجاري",
+    conditions: [
+      "الحصول على <strong>55% فأكثر</strong> في الشهادة التجارية",
+      "اجتياز امتحانات التكافؤ المحددة من الكلية",
+      "الحد الأدنى للنجاح في كل مادة <strong>50%</strong>",
+      "مدة اجتياز الامتحانات <strong>سنتين كحد أقصى</strong>"
+    ],
+    needs: [
+      "صورة شهادة الدبلوم التجاري <strong>معتمدة</strong>",
+      "كشف درجات <strong>مصدق</strong>",
+      "صورة بطاقة الرقم القومي",
+      "<strong>4 صور شخصية</strong>",
+      "ملف القبول من الجامعة"
+    ],
+    costs: {
+      firstYear: "5,000 — 7,500",
+      annual: "4,500 — 6,500",
+      exams: "800 — 1,500",
+      note: "المصاريف أقل نسبياً مقارنة بالكليات الهندسية. تختلف حسب الفرقة (إرشاد سياحي / فندقة)."
+    },
+    council: "المجلس الأعلى يُقر بتكافؤ الدبلوم التجاري (3 سنوات) مع <strong>السنة الأولى</strong> بكلية السياحة والفنادق. الطالب يلتحق بالسنة الثانية بعد اجتياز الامتحانات."
+  },
+
+  "Management Technology and Information Systems": {
+    icon: "fa-network-wired",
+    color: "#ec4899",
+    bg: "rgba(236,72,153,0.1)",
+    brd: "rgba(236,72,153,0.2)",
+    subtitle: "تكنولوجيا الإدارة ونظم المعلومات — تكافؤ دبلوم تجاري",
+    conditions: [
+      "الحصول على <strong>60% فأكثر</strong> في الشهادة التجارية",
+      "اجتياز امتحانات التكافؤ في المواد المحددة",
+      "الحد الأدنى للنجاح <strong>50%</strong> في كل مادة",
+      "مدة اجتياز الامتحانات <strong>سنتين</strong>"
+    ],
+    needs: [
+      "صورة شهادة الدبلوم التجاري <strong>معتمدة</strong>",
+      "كشف درجات <strong>مصدق</strong>",
+      "صورة بطاقة الرقم القومي",
+      "<strong>4 صور شخصية</strong>",
+      "ملف القبول مستوفى"
+    ],
+    costs: {
+      firstYear: "5,500 — 8,000",
+      annual: "5,000 — 7,000",
+      exams: "900 — 1,500",
+      note: "الكلية متاحة في جامعات محددة. المصاريف تشمل رسوم المعاملات والمختبرات."
+    },
+    council: "المجلس الأعلى أقرّ هذه الكلية كتخصص مستقل عن التجارة. الدبلوم التجاري يعادل <strong>السنة الأولى</strong> ويبدأ الطالب من السنة الثانية."
+  },
+
+  "Faculty of Education": {
+    icon: "fa-chalkboard-user",
+    color: "#22c55e",
+    bg: "rgba(34,197,94,0.1)",
+    brd: "rgba(34,197,94,0.2)",
+    subtitle: "تربية — تكافؤ دبلوم تجاري",
+    conditions: [
+      "الحصول على <strong>65% فأكثر</strong> في الشهادة التجارية",
+      "اجتياز امتحانات التكافؤ (مواد التربية العامة)",
+      "الحد الأدنى للنجاح <strong>50%</strong>",
+      "مدة اجتياز الامتحانات <strong>سنتين</strong>"
+    ],
+    needs: [
+      "شهادة الدبلوم التجاري <strong>معتمدة</strong>",
+      "كشف درجات <strong>مصدق</strong>",
+      "بطاقة الرقم القومي",
+      "<strong>4 صور شخصية</strong>",
+      "ملف القبول",
+      "تحديد الشعبة المطلوبة (رياضيات / لغة إنجليزية / etc.)"
+    ],
+    costs: {
+      firstYear: "4,000 — 6,000",
+      annual: "3,500 — 5,500",
+      exams: "600 — 1,200",
+      note: "من أرخص الكليات. بعض شعب التربية قد تتطلب شروطاً إضافية حسب الجامعة."
+    },
+    council: "المجلس الأعلى يُقر بتكافؤ الدبلوم التجاري مع <strong>السنة الأولى</strong> بكلية التربية. الطالب يلتحق بالسنة الثانية ويختار شعبة التخصص."
+  },
+
+  "Faculty of Commerce and Business Administration": {
+    icon: "fa-briefcase",
+    color: "#f97316",
+    bg: "rgba(249,115,22,0.1)",
+    brd: "rgba(249,115,22,0.2)",
+    subtitle: "تجارة وإدارة أعمال — تكافؤ دبلوم تجاري",
+    conditions: [
+      "الحصول على <strong>70% فأكثر</strong> في الشهادة التجارية",
+      "اجتياز امتحانات التكافؤ في المواد التجارية الأساسية",
+      "الحد الأدنى للنجاح <strong>50%</strong> في كل مادة",
+      "مدة اجتياز الامتحانات <strong>سنتين</strong>"
+    ],
+    needs: [
+      "شهادة الدبلوم التجاري <strong>معتمدة أصلية</strong>",
+      "كشف درجات <strong>مصدق</strong> من الإدارة التعليمية",
+      "بطاقة الرقم القومي",
+      "<strong>4 صور شخصية</strong>",
+      "ملف القبول مستوفى",
+      "شهادة ميلاد"
+    ],
+    costs: {
+      firstYear: "5,500 — 8,000",
+      annual: "5,000 — 7,500",
+      exams: "800 — 1,500",
+      note: "تجارة وإدارة أعمال تختلف عن التجارة العامة في طبيعة المقررات (أكثر إدارة وتسويق)."
+    },
+    council: "المجلس الأعلى يُقر تكافؤ الدبلوم التجاري مع <strong>السنة الأولى</strong>. الطالب يلتحق بالسنة الثانية في قسم إدارة الأعمال."
+  },
+
+  "Faculty of Commerce": {
+    icon: "fa-scale-balanced",
+    color: "#a855f7",
+    bg: "rgba(168,85,247,0.1)",
+    brd: "rgba(168,85,247,0.2)",
+    subtitle: "تجارة — تكافؤ دبلوم تجاري",
+    conditions: [
+      "الحصول على <strong>70% فأكثر</strong> في الشهادة التجارية",
+      "اجتياز امتحانات التكافؤ في المحاسبة والاقتصاد والإحصاء والقانون التجاري",
+      "الحد الأدنى للنجاح <strong>50%</strong> في كل مادة",
+      "مدة اجتياز الامتحانات <strong>سنتين</strong>"
+    ],
+    needs: [
+      "شهادة الدبلوم التجاري <strong>معتمدة أصلية</strong>",
+      "كشف درجات <strong>مصدق</strong> من الإدارة التعليمية",
+      "بطاقة الرقم القومي",
+      "<strong>4 صور شخصية</strong>",
+      "ملف القبول مستوفى",
+      "شهادة ميلاد"
+    ],
+    costs: {
+      firstYear: "5,000 — 7,500",
+      annual: "4,500 — 7,000",
+      exams: "700 — 1,300",
+      note: "كلية التجارة العامة هي الأكثر توفراً في الجامعات الحكومية. المصاريف منخفضة نسبياً."
+    },
+    council: "المجلس الأعلى للجامعات يُقر بتكافؤ الدبلوم التجاري (3 سنوات) مع <strong>السنة الأولى</strong> بكلية التجارة. يلتحق الطالب بالسنة الثانية ويختار قسم (محاسبة / إدارة / اقتصاد / إحصاء)."
+  }
+};
+
+/* ═══ Toast ═══ */
+function showToast(msg, type) {
+  var c = document.getElementById('toastContainer');
+  var iconName = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+  var t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = '<i class="fa-solid ' + iconName + '"></i><span>' + msg + '</span>';
+  c.appendChild(t);
+  setTimeout(function() { t.style.opacity = '0'; t.style.transform = 'translateX(60px)'; t.style.transition = 'all 0.3s'; }, 3500);
+  setTimeout(function() { t.remove(); }, 4000);
+}
+
+/* ═══ Modal Logic ═══ */
+var currentModalCollege = '';
+
+function openCollegeModal(collegeName) {
+  var data = COLLEGE_DETAILS[collegeName];
+  if (!data) return;
+
+  currentModalCollege = collegeName;
+
+  /* Header */
+  var iconEl = document.getElementById('modalIcon');
+  iconEl.style.background = data.bg;
+  iconEl.style.color = data.color;
+  iconEl.style.border = '1px solid ' + data.brd;
+  iconEl.innerHTML = '<i class="fa-solid ' + data.icon + '"></i>';
+
+  document.getElementById('modalTitle').textContent = collegeName;
+  document.getElementById('modalSubtitle').textContent = data.subtitle;
+
+  /* Body */
+  var body = '';
+
+  /* Section 1: Conditions */
+  body += '<div class="info-section">';
+  body += '<div class="info-section-header">';
+  body += '<div class="info-section-icon" style="background:rgba(59,130,246,0.12);color:var(--primary)"><i class="fa-solid fa-clipboard-list"></i></div>';
+  body += '<span class="info-section-title" style="color:var(--primary)">شروط التقديم</span>';
+  body += '</div>';
+  body += '<ul class="info-list">';
+  for (var i = 0; i < data.conditions.length; i++) {
+    body += '<li><i class="fa-solid fa-circle" style="color:var(--primary)"></i> ' + data.conditions[i] + '</li>';
+  }
+  body += '</ul></div>';
+
+  /* Section 2: Needs */
+  body += '<div class="info-section">';
+  body += '<div class="info-section-header">';
+  body += '<div class="info-section-icon" style="background:rgba(34,197,94,0.12);color:var(--success)"><i class="fa-solid fa-folder-open"></i></div>';
+  body += '<span class="info-section-title" style="color:var(--success)">المستندات المطلوبة</span>';
+  body += '</div>';
+  body += '<ul class="info-list">';
+  for (var i = 0; i < data.needs.length; i++) {
+    body += '<li><i class="fa-solid fa-circle" style="color:var(--success)"></i> ' + data.needs[i] + '</li>';
+  }
+  body += '</ul></div>';
+
+  /* Section 3: Costs */
+  body += '<div class="info-section">';
+  body += '<div class="info-section-header">';
+  body += '<div class="info-section-icon" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i class="fa-solid fa-coins"></i></div>';
+  body += '<span class="info-section-title" style="color:var(--warning)">المصاريف التقريبية (جنيه)</span>';
+  body += '</div>';
+  body += '<div class="info-cost-grid">';
+  body += '<div class="info-cost-item"><div class="info-cost-label">السنة الأولى</div><div class="info-cost-value green">' + data.costs.firstYear + '</div></div>';
+  body += '<div class="info-cost-item"><div class="info-cost-label">سنوياً (باقي السنوات)</div><div class="info-cost-value blue">' + data.costs.annual + '</div></div>';
+  body += '<div class="info-cost-item"><div class="info-cost-label">رسوم الامتحانات</div><div class="info-cost-value yellow">' + data.costs.exams + '</div></div>';
+  body += '<div class="info-cost-item"><div class="info-cost-label">الإجمالي التقريبي</div><div class="info-cost-value" style="color:var(--text)">' + calcTotal(data.costs) + '</div></div>';
+  body += '<div class="info-cost-note"><i class="fa-solid fa-circle-info" style="margin-right:0.25rem;opacity:.6"></i> ' + data.costs.note + '</div>';
+  body += '</div></div>';
+
+  /* Section 4: Council */
+  body += '<div class="info-section">';
+  body += '<div class="info-section-header">';
+  body += '<div class="info-section-icon" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i class="fa-solid fa-landmark"></i></div>';
+  body += '<span class="info-section-title" style="color:var(--warning)">قرار المجلس الأعلى للجامعات</span>';
+  body += '</div>';
+  body += '<div class="info-council">' + data.council + '</div>';
+  body += '</div>';
+
+  document.getElementById('modalBody').innerHTML = body;
+
+  /* Open */
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCollegeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentModalCollege = '';
+}
+
+function calcTotal(costs) {
+  var first = parseRange(costs.firstYear);
+  var annual = parseRange(costs.annual);
+  var exams = parseRange(costs.exams);
+  var low = first[0] + annual[0] * 3 + exams[0] * 4;
+  var high = first[1] + annual[1] * 3 + exams[1] * 4;
+  return formatNum(low) + ' — ' + formatNum(high);
+}
+
+function parseRange(str) {
+  var parts = str.replace(/,/g, '').split('—').map(function(s) { return parseInt(s.trim()) || 0; });
+  if (parts.length === 1) return [parts[0], parts[0]];
+  return [parts[0], parts[1]];
+}
+
+function formatNum(n) {
+  return n.toLocaleString('en-US');
+}
+
+/* Modal events */
+document.getElementById('modalClose').addEventListener('click', closeCollegeModal);
+document.getElementById('modalBack').addEventListener('click', closeCollegeModal);
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeCollegeModal();
+});
+document.getElementById('modalSelect').addEventListener('click', function() {
+  if (!currentModalCollege) return;
+  var name = currentModalCollege;
+  closeCollegeModal();
+  selectCollege(name);
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCollegeModal();
+});
+
+/* ═══ Grade / Year Hints ═══ */
+var gradeInput = document.getElementById('grade');
+var schoolSelect = document.getElementById('diplomaType');
+var gradeHint = document.getElementById('gradeHint');
+var yearInput = document.getElementById('gradYear');
+var yearHint = document.getElementById('yearHint');
+
+function updateHint() {
+  var val = parseFloat(gradeInput.value);
+  var school = schoolSelect.value;
+  var minRequired = 70;
+  if (school === 'Commercial') minRequired = 55;
+  else if (school === 'Industrial') minRequired = 70;
+  else if (school === 'WE' || school === 'Elsweedy') minRequired = 70;
+
+  if (gradeInput.value === '') {
+    gradeHint.textContent = school ? 'Minimum required: ' + minRequired + '%' : 'Select your school to see requirements';
+    gradeHint.className = 'form-hint';
+  } else if (val > 100) {
+    gradeHint.textContent = 'Grade cannot exceed 100%';
+    gradeHint.className = 'form-hint error';
+  } else if (val < minRequired) {
+    gradeHint.textContent = 'Grade below ' + minRequired + '% requirement';
+    gradeHint.className = 'form-hint error';
+  } else {
+    gradeHint.textContent = 'Grade meets the minimum requirement';
+    gradeHint.className = 'form-hint valid';
+  }
+}
+
+function updateYearHint() {
+  var val = parseInt(yearInput.value);
+  if (!yearInput.value) {
+    yearHint.textContent = 'Eligibility is only for 2024 & 2025 graduates';
+    yearHint.className = 'form-hint';
+  } else if (val !== 2024 && val !== 2025) {
+    yearHint.textContent = 'Only 2024 and 2025 graduates can apply';
+    yearHint.className = 'form-hint error';
+  } else {
+    yearHint.textContent = 'Valid graduation year';
+    yearHint.className = 'form-hint valid';
+  }
+}
+
+gradeInput.addEventListener('input', updateHint);
+yearInput.addEventListener('input', updateYearHint);
+schoolSelect.addEventListener('change', function() {
+  var school = this.value;
+  gradeInput.placeholder = school === 'Commercial' ? 'e.g. 55' : 'e.g. 70';
+  updateHint();
+});
+
+/* ═══ Form Submit ═══ */
+document.getElementById('eligibilityForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  var schoolVal = document.getElementById('diplomaType').value;
+  var gradeVal = parseFloat(document.getElementById('grade').value);
+  var yearVal = parseInt(document.getElementById('gradYear').value);
+
+  if (!schoolVal || isNaN(gradeVal) || isNaN(yearVal)) {
+    showToast('Please fill all fields.', 'error');
+    var formCard = document.querySelector('.form-card');
+    formCard.style.animation = 'none'; formCard.offsetHeight; formCard.style.animation = 'shake 0.5s ease';
+    return;
+  }
+  if (yearVal !== 2024 && yearVal !== 2025) {
+    showToast('Eligibility is only available for 2024 and 2025 graduates.', 'error');
+    var formCard = document.querySelector('.form-card');
+    formCard.style.animation = 'none'; formCard.offsetHeight; formCard.style.animation = 'shake 0.5s ease';
+    return;
+  }
+
+  var loading = document.getElementById('loadingArea');
+  var resultArea = document.getElementById('resultArea');
+  resultArea.classList.remove('show');
+  loading.style.display = 'block';
+
+  setTimeout(function() {
+    var result = { eligible: false, message: '', colleges: [] };
+
+    if (schoolVal === 'WE' || schoolVal === 'Elsweedy') {
+      if (gradeVal >= 70) {
+        result.eligible = true;
+        result.message = 'Excellent! With a grade of <strong>' + gradeVal + '%</strong>, you qualify for the following technical tracks:';
+        result.colleges = ['Engineering', 'Computer Science / Computing', 'AI'];
+      } else {
+        result.message = 'Your grade is <strong>' + gradeVal + '%</strong>, which is below the required <strong>70%</strong> for WE/Elsweedy tracks.';
+      }
+    } else if (schoolVal === 'Industrial') {
+      if (gradeVal >= 70) {
+        result.eligible = true;
+        result.message = 'Great! With a grade of <strong>' + gradeVal + '%</strong>, you qualify for the following tracks:';
+        result.colleges = ['Engineering', 'Computer Science / Computing'];
+      } else {
+        result.message = 'Your grade is <strong>' + gradeVal + '%</strong>. Industrial School requires a minimum of <strong>70%</strong>.';
+      }
+    } else if (schoolVal === 'Commercial') {
+      var eligibleColleges = [];
+      if (gradeVal >= 55) eligibleColleges.push('Tourism and Hotels');
+      if (gradeVal >= 60) eligibleColleges.push('Management Technology and Information Systems');
+      if (gradeVal >= 65) eligibleColleges.push('Faculty of Education');
+      if (gradeVal >= 70) { eligibleColleges.push('Faculty of Commerce and Business Administration'); eligibleColleges.push('Faculty of Commerce'); }
+      if (eligibleColleges.length > 0) {
+        result.eligible = true;
+        result.message = 'With a grade of <strong>' + gradeVal + '%</strong>, you are eligible for all faculties requiring up to this grade:';
+        result.colleges = eligibleColleges;
+      } else {
+        result.message = 'Your grade <strong>' + gradeVal + '%</strong> does not meet the minimum requirement (55%) for any faculty.';
+      }
+    }
+
+    loading.style.display = 'none';
+    resultArea.classList.add('show');
+
+    var banner = document.getElementById('resultBanner');
+    var cardsEl = document.getElementById('collegeCards');
+    cardsEl.innerHTML = '';
+
+    if (result.eligible) {
+      banner.className = 'result-banner success';
+      banner.innerHTML = '<div class="result-banner-icon"><i class="fa-solid fa-circle-check"></i></div><div class="result-banner-text"><h3>You\'re Eligible!</h3><p>' + result.message + '</p></div>';
+
+      var collegeBasic = {
+        'Tourism and Hotels': { icon: 'fa-plane', subjects: 'Hospitality Management, Tourism Guidance' },
+        'Management Technology and Information Systems': { icon: 'fa-network-wired', subjects: 'MIS, Data Analysis, Operations Research' },
+        'Faculty of Education': { icon: 'fa-chalkboard-user', subjects: 'Pedagogy, Psychology, Teaching Methods' },
+        'Faculty of Commerce and Business Administration': { icon: 'fa-briefcase', subjects: 'Management, Marketing, HR' },
+        'Faculty of Commerce': { icon: 'fa-scale-balanced', subjects: 'Accounting, Finance, Economics' },
+        'Engineering': { icon: 'fa-gear', subjects: 'Mechanical, Electrical, Civil' },
+        'Computer Science / Computing': { icon: 'fa-laptop-code', subjects: 'Software Engineering, AI, Networks' },
+        'AI': { icon: 'fa-robot', subjects: 'Machine Learning, Deep Learning, NLP' }
+      };
+
+      result.colleges.forEach(function(col, i) {
+        var info = collegeBasic[col] || { icon: 'fa-graduation-cap', subjects: '' };
+        var card = document.createElement('div');
+        card.className = 'college-card';
+        card.style.animation = 'fadeUp 0.5s ease ' + (i * 0.12) + 's both';
+        card.innerHTML = '<div class="college-icon-wrap"><i class="fa-solid ' + info.icon + '"></i></div>'
+          + '<h3>' + col + '</h3>'
+          + '<p class="subjects">' + info.subjects + '</p>'
+          + '<div class="college-card-actions">'
+          + '<button class="btn-info" onclick="openCollegeModal(\'' + col.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-circle-info"></i> Details</button>'
+          + '<button class="btn btn-success btn-sm" onclick="selectCollege(\'' + col.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-check"></i> Select</button>'
+          + '</div>';
+        cardsEl.appendChild(card);
+      });
+    } else {
+      banner.className = 'result-banner fail';
+      banner.innerHTML = '<div class="result-banner-icon"><i class="fa-solid fa-circle-xmark"></i></div><div class="result-banner-text"><h3>Not Eligible</h3><p>' + result.message + '</p></div>';
+    }
+  }, 1200);
+});
+
+/* ═══ Select College ═══ */
+function selectCollege(college) {
+  var token = localStorage.getItem('equivapath_token');
+  localStorage.setItem('equivapath_pending_college', college);
+  localStorage.setItem('equivapath_temp_name', college);
+
+  if (!token) {
+    localStorage.setItem('equivapath_college', college);
+    showToast('Proceeding to registration...', 'success');
+    setTimeout(function() { window.location.href = 'register.html'; }, 1000);
+    return;
+  }
+
+  fetch('http://localhost:3000/api/select-college', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ college: college })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(result) {
+    localStorage.setItem('equivapath_college', college);
+    showToast(college + ' selected successfully!', 'success');
+    setTimeout(function() { window.location.href = 'subject.html'; }, 1000);
+  })
+  .catch(function() {
+    localStorage.setItem('equivapath_college', college);
+    window.location.href = 'subject.html';
+  });
+}
+</script>
+</body>
+</html>

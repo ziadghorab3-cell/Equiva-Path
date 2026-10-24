@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - EquivaPath</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --bg-main: #020617;
+  --bg-section: #0f172a;
+  --card: #111827;
+  --border: #1f2933;
+  --text: #ffffff;
+  --text-sec: #9ca3af;
+  --text-dim: #6b7280;
+  --success: #22c55e;
+  --success-bg: rgba(34,197,94,0.12);
+  --danger: #ef4444;
+  --danger-bg: rgba(239,68,68,0.12);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245,158,11,0.12);
+  --purple: #8b5cf6;
+  --purple-bg: rgba(139,92,246,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-main);
+  color: var(--text);
+  min-height: 100vh;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { color: var(--primary-hover); }
+
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(2,6,23,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 66px;
+}
+.nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+.nav-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 1rem;
+}
+.nav-logo span {
+  font-size: 1.4rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.nav-r { display: flex; gap: 0.4rem; align-items: center; }
+.nav-r a {
+  color: var(--text-sec); font-weight: 500; font-size: 0.88rem;
+  padding: 0.4rem 0.8rem; border-radius: 8px;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.nav-r a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.nav-r a.act { color: var(--primary); background: rgba(59,130,246,0.1); }
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 1rem; border-radius: 8px; font-weight: 600;
+  font-size: 0.85rem; border: none; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.btn-p { background: var(--primary); color: #fff; }
+.btn-p:hover { background: var(--primary-hover); }
+.btn-o { background: transparent; color: var(--text-sec); border: 1px solid var(--border); }
+.btn-o:hover { border-color: var(--primary); color: var(--primary); }
+.btn-d { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+.btn-d:hover { background: rgba(239,68,68,0.22); }
+.btn-full { width: 100%; justify-content: center; }
+
+.wrap { max-width: 900px; margin: 0 auto; padding: 86px 1.5rem 3rem; }
+.pg-title { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.7px; margin-bottom: 2rem; }
+.pg-title em { font-style: normal; color: var(--primary); }
+
+.prof-header {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2.5rem;
+  display: flex; align-items: center; gap: 2rem;
+  margin-bottom: 1.5rem; position: relative; overflow: hidden;
+}
+.prof-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; background: linear-gradient(90deg, var(--primary), var(--purple));
+}
+.prof-avatar {
+  width: 90px; height: 90px; border-radius: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; font-weight: 900; flex-shrink: 0;
+  color: #fff; text-transform: uppercase;
+}
+.prof-info { flex: 1; min-width: 0; }
+.prof-info h1 { font-size: 1.6rem; font-weight: 900; margin-bottom: 0.3rem; }
+.prof-info .prof-email { color: var(--text-sec); font-size: 0.92rem; margin-bottom: 0.5rem; }
+.prof-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.ptag {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.25rem 0.7rem; border-radius: 7px;
+  font-size: 0.78rem; font-weight: 700;
+}
+.ptag.blue { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: var(--primary); }
+.ptag.green { background: var(--success-bg); border: 1px solid rgba(34,197,94,0.25); color: var(--success); }
+.ptag.purple { background: var(--purple-bg); border: 1px solid rgba(139,92,246,0.25); color: var(--purple); }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 1.8rem;
+}
+.card h2 {
+  font-size: 1.08rem; font-weight: 700; margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 0.5rem; color: var(--text);
+}
+
+.fg { margin-bottom: 1.1rem; }
+.fg label {
+  display: block; font-size: 0.78rem; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 0.35rem;
+}
+.fg input, .fg select {
+  width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg-section);
+  color: var(--text); font-size: 0.9rem; font-family: inherit;
+  transition: border-color 0.2s;
+}
+.fg input:focus, .fg select:focus { outline: none; border-color: var(--primary); }
+.fg .f-hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.25rem; }
+
+.info-rows { display: flex; flex-direction: column; gap: 0.75rem; }
+.info-row {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.8rem 1rem; background: var(--bg-section);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.info-row .ir-ic {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem; flex-shrink: 0; background: rgba(59,130,246,0.08); color: var(--primary);
+}
+.info-row .ir-lbl { font-size: 0.72rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+.info-row .ir-val { font-size: 0.92rem; font-weight: 600; }
+
+.pass-section { margin-top: 1.5rem; }
+.pass-divider {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin-bottom: 1.2rem; padding-top: 0.5rem;
+}
+.pass-divider span { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.pass-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+
+.danger-zone {
+  background: var(--card); border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 18px; padding: 1.8rem;
+}
+.danger-zone h2 { color: var(--danger); }
+.danger-zone p { color: var(--text-sec); font-size: 0.88rem; margin-bottom: 1rem; line-height: 1.5; }
+
+.toast-c { position: fixed; top: 78px; right: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 0.4rem; }
+.toast { padding: 0.7rem 1.1rem; border-radius: 9px; font-size: 0.85rem; font-weight: 500; animation: ti 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.4); max-width: 360px; display: flex; align-items: center; gap: 0.5rem;}
+.toast.ok { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+.toast.err { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+.toast.inf { background: rgba(59,130,246,0.15); color: var(--primary); border: 1px solid rgba(59,130,246,0.3); }
+@keyframes ti { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-bg.show { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 2.5rem; text-align: center;
+  max-width: 380px; width: 100%; transform: scale(0.9); transition: transform 0.3s;
+}
+.modal-bg.show .modal { transform: scale(1); }
+.modal .mi { font-size: 3rem; display: block; margin-bottom: 0.8rem; }
+.modal h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text); }
+.modal p { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5; }
+.modal .mb { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 768px) {
+  .two-col { grid-template-columns: 1fr; }
+  .prof-header { flex-direction: column; text-align: center; }
+  .prof-tags { justify-content: center; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 78px 1rem 2rem; }
+  .prof-header { padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <span>EquivaPath</span>
+  </a>
+  <div class="nav-r">
+    <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="subject.html"><i class="fa-solid fa-book-open"></i> Subjects</a>
+    <a href="profile.html" class="act"><i class="fa-solid fa-user"></i> Profile</a>
+    <button class="btn btn-d" onclick="localStorage.clear();location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+  </div>
+</nav>
+
+<div class="toast-c" id="TC"></div>
+
+<div class="modal-bg" id="logoutModal">
+  <div class="modal">
+    <span class="mi" style="color: var(--warning);"><i class="fa-solid fa-right-from-bracket"></i></span>
+    <h2>Logout?</h2>
+    <p>Are you sure you want to logout? You will need to login again to access your dashboard.</p>
+    <div class="mb">
+      <button class="btn btn-o" onclick="document.getElementById('logoutModal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-d" onclick="doLogout()">Yes, Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="deleteModal">
+  <div class="modal">
+    <span class="mi" style="color: var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i></span>
+    <h2>Delete Account?</h2>
+    <p>This action cannot be undone. All your data, quiz results, and progress will be permanently deleted.</p>
+    <div class="mb">
+      <button class="btn btn-o" onclick="document.getElementById('deleteModal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-d" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <h1 class="pg-title">My <em>Profile</em></h1>
+
+  <div class="prof-header">
+    <div class="prof-avatar" id="avatar">AS</div>
+    <div class="prof-info">
+      <h1 id="dispName">Student</h1>
+      <div class="prof-email" id="dispEmail">loading...</div>
+      <div class="prof-tags">
+        <span class="ptag blue" id="dispPhone"><i class="fa-solid fa-mobile-screen-button"></i> —</span>
+        <span class="ptag green" id="dispCollege"><i class="fa-solid fa-graduation-cap"></i> —</span>
+        <span class="ptag purple" id="dispJoined"><i class="fa-solid fa-calendar-days"></i> —</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Row Removed -->
+
+  <div class="two-col">
+    <!-- LEFT COL -->
+    <div class="card">
+      <h2><i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Edit Profile</h2>
+      <form id="editForm" onsubmit="return saveProfile(event)">
+        <div class="fg">
+          <label>Full Name</label>
+          <input type="text" id="editName" placeholder="Your full name" required>
+        </div>
+        <div class="fg">
+          <label>Email Address</label>
+          <input type="email" id="editEmail" placeholder="Your email" required>
+        </div>
+        <div class="fg">
+          <label>Phone Number</label>
+          <input type="tel" id="editPhone" placeholder="Your phone">
+        </div>
+        <button type="submit" class="btn btn-p btn-full" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+      </form>
+
+      <div class="pass-section">
+        <div class="pass-divider"><span>Change Password</span><hr></div>
+        <form id="passForm" onsubmit="return changePass(event)">
+          <div class="fg">
+            <label>Current Password</label>
+            <input type="password" id="curPass" placeholder="Enter current password">
+          </div>
+          <div class="fg">
+            <label>New Password</label>
+            <input type="password" id="newPass" placeholder="Enter new password (min 6 chars)">
+          </div>
+          <div class="fg">
+            <label>Confirm New Password</label>
+            <input type="password" id="confPass" placeholder="Confirm new password">
+            <div class="f-hint" id="passHint"></div>
+          </div>
+          <button type="submit" class="btn btn-o btn-full" id="passBtn"><i class="fa-solid fa-lock"></i> Update Password</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- RIGHT COL -->
+    <div>
+      <div class="card">
+        <h2><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Account Info</h2>
+        <div class="info-rows">
+          <div class="info-row">
+            <div class="ir-ic"><i class="fa-solid fa-user"></i></div>
+            <div><div class="ir-lbl">Name</div><div class="ir-val" id="infoName">—</div></div>
+          </div>
+          <div class="info-row">
+            <div class="ir-ic"><i class="fa-solid fa-envelope"></i></div>
+            <div><div class="ir-lbl">Email</div><div class="ir-val" id="infoEmail">—</div></div>
+          </div>
+          <div class="info-row">
+            <div class="ir-ic"><i class="fa-solid fa-phone"></i></div>
+            <div><div class="ir-lbl">Phone</div><div class="ir-val" id="infoPhone">—</div></div>
+          </div>
+          <div class="info-row">
+            <div class="ir-ic"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div><div class="ir-lbl">College</div><div class="ir-val" id="infoCollege">—</div></div>
+          </div>
+          <div class="info-row">
+            <div class="ir-ic"><i class="fa-solid fa-calendar"></i></div>
+            <div><div class="ir-lbl">Member Since</div><div class="ir-val" id="infoJoined">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity Section Removed -->
+    </div>
+  </div>
+
+  <div class="danger-zone">
+    <h2><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h2>
+    <p>These actions are irreversible. Please be certain before proceeding.</p>
+    <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+      <button class="btn btn-d" onclick="document.getElementById('logoutModal').classList.add('show')"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+      <button class="btn btn-d" onclick="document.getElementById('deleteModal').classList.add('show')"><i class="fa-solid fa-trash-can"></i> Delete Account</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== HELPERS ===== */
+function toast(m, t) {
+  var c = document.getElementById('TC');
+  var d = document.createElement('div');
+  var icon = t === 'ok' ? 'fa-circle-check' : (t === 'err' ? 'fa-circle-xmark' : 'fa-circle-info');
+  d.className = 'toast ' + (t || 'inf');
+  d.innerHTML = '<i class="fa-solid ' + icon + '"></i> ' + m;
+  c.appendChild(d);
+  setTimeout(function() { d.remove(); }, 3500);
+}
+
+function doLogout() {
+  document.getElementById('logoutModal').classList.remove('show');
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+
+function confirmDelete() {
+  document.getElementById('deleteModal').classList.remove('show');
+  toast('Account deletion requires server connection', 'err');
+}
+
+function getInitials(name) {
+  if (!name) return '??';
+  var parts = name.trim().split(/\s+/);
+  return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+}
+
+function updateDisplay(name, email, phone, college) {
+  document.getElementById('avatar').textContent = getInitials(name);
+  document.getElementById('dispName').textContent = name || 'Student';
+  document.getElementById('dispEmail').textContent = email || '—';
+  document.getElementById('dispPhone').innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> ' + (phone || '—');
+  document.getElementById('dispCollege').innerHTML = '<i class="fa-solid fa-graduation-cap"></i> ' + (college || 'Not selected') + ' Program';
+  document.getElementById('infoName').textContent = name || '—';
+  document.getElementById('infoEmail').textContent = email || '—';
+  document.getElementById('infoPhone').textContent = phone || '—';
+  document.getElementById('infoCollege').textContent = college || 'Not selected';
+  document.getElementById('editName').value = name || '';
+  document.getElementById('editEmail').value = email || '';
+  document.getElementById('editPhone').value = phone || '';
+}
+
+/* ===== FETCH SERVER DATA (Cleaned - No Quiz Stats) ===== */
+function fetchServerData() {
+  var tk = localStorage.getItem('equivapath_token') || '';
+  var uid = '';
+  try { uid = JSON.parse(localStorage.getItem('equivapath_user') || '{}').id || ''; } catch (e) {}
+
+  if (!tk || !uid) return;
+
+  fetch('http://localhost:3000/api/dashboard/' + uid, {
+    headers: { 'Authorization': 'Bearer ' + tk }
+  })
+  .then(function(r) { 
+    if (!r.ok) throw new Error('Network Error'); 
+    return r.json(); 
+  })
+  .then(function(d) {
+    // تحديث بيانات المستخدم الأساسية فقط
+    if (d.user) {
+      var col = d.user.selected_college || localStorage.getItem('equivapath_college') || '';
+      updateDisplay(d.user.name, d.user.email, d.user.phone, col);
+      if (d.user.createdAt) {
+        var yr = new Date(d.user.createdAt).getFullYear();
+        document.getElementById('dispJoined').innerHTML = '<i class="fa-solid fa-calendar-days"></i> Joined ' + yr;
+        document.getElementById('infoJoined').textContent = yr;
+      }
+    }
+    // تم إزالة جزء تحديث الإحصائيات والـ Activity هنا
+  })
+  .catch(function(err) {
+    console.error("Fetch error:", err);
+    // يمكن إضافة Toast هنا إذا أردت تنبيه المستخدم بفشل تحميل البيانات
+    // toast('Failed to load latest data', 'err');
+  });
+}
+
+/* ===== INIT ON LOAD ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  // محاولة تحميل البيانات المحلية أولاً بشكل سريع
+  try {
+    var u = JSON.parse(localStorage.getItem('equivapath_user') || '{}');
+    var col = localStorage.getItem('equivapath_college') || u.selected_college || '';
+    if (u.name) updateDisplay(u.name, u.email, u.phone, col);
+  } catch (e) {}
+
+  // ثم جلب البيانات الحقيقية من الباك اند
+  fetchServerData();
+});
+
+/* ===== PASSWORD MATCH CHECK ===== */
+document.getElementById('confPass').addEventListener('input', function() {
+  var np = document.getElementById('newPass').value;
+  var cp = this.value;
+  var hint = document.getElementById('passHint');
+  if (cp.length === 0) { hint.textContent = ''; return; }
+  if (np !== cp) {
+    hint.textContent = 'Passwords do not match';
+    hint.style.color = 'var(--danger)';
+  } else {
+    hint.textContent = 'Passwords match';
+    hint.style.color = 'var(--success)';
+  }
+});
+
+/* ===== SAVE PROFILE ===== */
+function saveProfile(e) {
+  e.preventDefault();
+  var name = document.getElementById('editName').value.trim();
+  var email = document.getElementById('editEmail').value.trim();
+  var phone = document.getElementById('editPhone').value.trim();
+
+  if (!name || !email) { toast('Name and email are required', 'err'); return false; }
+
+  var btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+  var tk = localStorage.getItem('equivapath_token') || '';
+
+  fetch('http://localhost:3000/api/profile', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tk },
+    body: JSON.stringify({ name: name, email: email, phone: phone })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.user) {
+      localStorage.setItem('equivapath_user', JSON.stringify(d.user));
+      updateDisplay(d.user.name, d.user.email, d.user.phone, d.user.selected_college);
+      toast('Profile updated successfully!', 'ok');
+    } else {
+      toast(d.error || 'Failed to update', 'err');
+    }
+  })
+  .catch(function() {
+    try {
+      var u = JSON.parse(localStorage.getItem('equivapath_user') || '{}');
+      u.name = name; u.email = email; u.phone = phone;
+      localStorage.setItem('equivapath_user', JSON.stringify(u));
+      updateDisplay(name, email, phone, localStorage.getItem('equivapath_college') || '');
+      toast('Saved locally (server offline)', 'inf');
+    } catch (ex) {}
+  })
+  .finally(function() {
+    btn.disabled = false; 
+    btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+  });
+  return false;
+}
+
+/* ===== CHANGE PASSWORD ===== */
+function changePass(e) {
+  e.preventDefault();
+  var cur = document.getElementById('curPass').value;
+  var np = document.getElementById('newPass').value;
+  var cp = document.getElementById('confPass').value;
+
+  if (!cur || !np || !cp) { toast('All password fields are required', 'err'); return false; }
+  if (np.length < 6) { toast('New password must be at least 6 characters', 'err'); return false; }
+  if (np !== cp) { toast('New passwords do not match', 'err'); return false; }
+
+  var btn = document.getElementById('passBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+  var tk = localStorage.getItem('equivapath_token') || '';
+
+  fetch('http://localhost:3000/api/profile', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tk },
+    body: JSON.stringify({ currentPassword: cur, newPassword: np })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.message) {
+      toast('Password changed successfully!', 'ok');
+      document.getElementById('curPass').value = '';
+      document.getElementById('newPass').value = '';
+      document.getElementById('confPass').value = '';
+      document.getElementById('passHint').textContent = '';
+    } else {
+      toast(d.error || 'Failed to change password', 'err');
+    }
+  })
+  .catch(function() { toast('Cannot connect to server', 'err'); })
+  .finally(function() {
+    btn.disabled = false; 
+    btn.innerHTML = '<i class="fa-solid fa-lock"></i> Update Password';
+  });
+  return false;
+}
+</script>
+
+</body>
+</html>

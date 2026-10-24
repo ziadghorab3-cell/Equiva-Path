@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help Center - EquivaPath</title>
+<!-- Font Awesome Library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --bg-main: #020617;
+    --bg-section: #0f172a;
+    --card: #111827;
+    --border: #1f2933;
+    --text: #ffffff;
+    --text-secondary: #9ca3af;
+    --success: #22c55e;
+    --danger: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-main);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding-top: 70px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: direction 0.3s ease;
+  }
+  a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--primary-hover); }
+
+  /* NAVBAR */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 70px;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .nav-logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem;
+  }
+  .nav-logo span {
+    font-size: 1.5rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+  
+  /* Language Toggle Button */
+  .lang-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .lang-btn:hover { background: var(--primary); border-color: var(--primary); }
+  
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600;
+    font-size: 0.9rem; border: 1px solid var(--border); cursor: pointer;
+    color: var(--text); background: rgba(255,255,255,0.05);
+    transition: all 0.2s;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.1); border-color: var(--text); }
+
+  /* MAIN CONTENT */
+  .help-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 3rem;
+    flex: 1;
+  }
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* CATEGORIES GRID - MODIFIED TO 2 COLUMNS */
+  .categories-grid {
+    display: grid;
+    /* Default for mobile: 1 column */
+    grid-template-columns: 1fr; 
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  /* Desktop & Tablet: Force 2 columns per row */
+  @media (min-width: 768px) {
+    .categories-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .category-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .category-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .cat-icon {
+    width: 60px; height: 60px;
+    background: rgba(59,130,246,0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+  }
+  .category-card:hover .cat-icon {
+    background: var(--primary);
+    color: #fff;
+  }
+  .category-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .category-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  /* ACCORDION */
+  .accordion-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .accordion-item:hover { border-color: rgba(59,130,246,0.5); }
+  .accordion-header {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .accordion-header:hover { background: rgba(255,255,255,0.02); }
+  .accordion-header i {
+    color: var(--text-secondary);
+    transition: transform 0.3s;
+  }
+  .accordion-item.active .accordion-header { color: var(--primary); }
+  .accordion-item.active .accordion-header i {
+    transform: rotate(180deg);
+    color: var(--primary);
+  }
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: rgba(0,0,0,0.2);
+  }
+  .accordion-body p {
+    padding: 0 1.5rem 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  /* CONTACT CTA */
+  .contact-cta {
+    margin-top: 4rem;
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .contact-cta h2 { margin-bottom: 1rem; }
+  .contact-cta p { color: var(--text-secondary); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600;
+    font-size: 0.95rem; border: none; cursor: pointer;
+    transition: all 0.3s ease; text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+  }
+  .btn-primary:hover {
+    background: var(--primary-hover); color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59,130,246,0.5);
+  }
+
+  /* WHATSAPP BUTTON */
+  .btn-whatsapp {
+    background: #25D366; color: #fff;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  }
+  .btn-whatsapp:hover {
+    background: #128C7E;
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+  }
+
+  /* FOOTER */
+  .new-footer {
+    background: var(--bg-section);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: auto;
+  }
+
+  /* RTL SUPPORT (Arabic) */
+  html[dir="rtl"] {
+    text-align: right;
+  }
+  html[dir="rtl"] .accordion-header i {
+    /* Flip arrow direction visually */
+    transform: rotate(180deg);
+  }
+  html[dir="rtl"] .accordion-item.active .accordion-header i {
+    transform: rotate(0deg);
+  }
+  html[dir="rtl"] .fa-chevron-right {
+    transform: rotate(180deg); /* Flip list arrows */
+  }
+  html[dir="rtl"] .contact-cta p {
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .navbar { padding: 0 1rem; }
+    .nav-links { gap: 0.5rem; }
+    .contact-cta { padding: 2rem 1rem; }
+    .contact-cta div { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <i class="fa-solid fa-graduation-cap"></i>
+    </div>
+    <span>EquivaPath</span>
+  </div>
+  <div class="nav-links">
+    <!-- Language Toggle Button -->
+    <button class="lang-btn" onclick="toggleLanguage()">
+      <i class="fa-solid fa-globe"></i> <span id="langBtnText">العربية</span>
+    </button>
+    <a href="index.html" class="btn-back">
+      <i class="fa-solid fa-arrow-left"></i> <span data-en="Back Home" data-ar="الرئيسية">Back Home</span>
+    </a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="help-container">
+  
+  <!-- Categories -->
+  <h2 class="section-title">
+    <i class="fa-solid fa-layer-group"></i> 
+    <span data-en="Browse by Category" data-ar="تصفح حسب التصنيف">Browse by Category</span>
+  </h2>
+  <div class="categories-grid">
+    <div class="category-card">
+      <div class="cat-icon"><i class="fa-solid fa-rocket"></i></div>
+      <h3 data-en="Getting Started" data-ar="البدء">Getting Started</h3>
+      <p data-en="Learn how to create an account and start your journey." data-ar="تعلم كيفية إنشاء حساب وبدء رحلتك.">Learn how to create an account and start your journey.</p>
+    </div>
+
+    <div class="category-card">
+      <div class="cat-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+      <h3 data-en="Eligibility & Rules" data-ar="القبول والشروط">Eligibility & Rules</h3>
+      <p data-en="Understanding the equivalency criteria and requirements." data-ar="فهم معايير وشروط المعادلة.">Understanding the equivalency criteria and requirements.</p>
+    </div>
+
+    <div class="category-card">
+      <div class="cat-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <h3 data-en="Payments & Fees" data-ar="الدفع والرسوم">Payments & Fees</h3>
+      <p data-en="Information about subscription plans and payment methods." data-ar="معلومات عن خطط الاشتراك وطرق الدفع.">Information about subscription plans and payment methods.</p>
+    </div>
+
+    <div class="category-card">
+      <div class="cat-icon"><i class="fa-solid fa-headset"></i></div>
+      <h3 data-en="Technical Support" data-ar="الدعم الفني">Technical Support</h3>
+      <p data-en="Troubleshooting video playback, login issues, and app errors." data-ar="حل مشاكل تشغيل الفيديو، تسجيل الدخول، وأخطاء التطبيق.">Troubleshooting video playback, login issues, and app errors.</p>
+    </div>
+  </div>
+
+  <!-- Popular Articles (Restored Full List) -->
+  <h2 class="section-title">
+    <i class="fa-solid fa-fire"></i> 
+    <span data-en="Common Questions" data-ar="أسئلة شائعة">Common Questions</span>
+  </h2>
+  
+  <div class="accordion-list">
+    
+    <!-- 1. New Question -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span data-en="How to create an account and start your journey?" data-ar="كيف أنشئ حساباً وأبدأ رحلتي؟">How to create an account and start your journey?</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="accordion-body">
+        <p data-en="To get started, click the 'Register' button in the top navigation bar. Fill in your personal information and details about your technical diploma. Once you submit the form, verify your email address. After logging in, you can immediately check your eligibility status and access the dashboard." 
+           data-ar="للبدء، انقر على زر 'تسجيل' في شريط التنقل العلوي. أدخل بياناتك الشخصية وتفاصيل الدبلوم الفني الخاص بك. بمجرد إرسال النموذج، تحقق من عنوان بريدك الإلكتروني. بعد تسجيل الدخول، يمكنك التحقق فوراً من حالة أهليتك والوصول إلى لوحة التحكم.">
+           To get started, click the 'Register' button in the top navigation bar. Fill in your personal information and details about your technical diploma. Once you submit the form, verify your email address. After logging in, you can immediately check your eligibility status and access the dashboard.
+        </p>
+      </div>
+    </div>
+
+    <!-- 2. Engineering Eligibility -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span data-en="How do I check my eligibility for Engineering?" data-ar="كيف أتحقق من أهليتي لكلية الهندسة؟">How do I check my eligibility for Engineering?</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="accordion-body">
+        <p data-en="Go to the 'Check Eligibility' page from the dashboard or main menu. Select your diploma type, year of graduation, and specialization. The system will automatically calculate your eligibility percentage based on the Ministry of Higher Education's latest equivalency rules." 
+           data-ar="انتقل إلى صفحة 'تحقق من الأهلية' من لوحة التحكم أو القائمة الرئيسية. اختر نوع الدبلوم وسنة التخرج والتخصص. سيقوم النظام بحساب نسبة أهليتك تلقائياً بناءً على أحدث قواعد المعادلة لوزارة التعليم العالي.">
+           Go to the 'Check Eligibility' page from the dashboard or main menu. Select your diploma type, year of graduation, and specialization. The system will automatically calculate your eligibility percentage based on the Ministry of Higher Education's latest equivalency rules.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. Required Documents -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span data-en="Required documents for the equivalency file." data-ar="المستندات المطلوبة لملف المعادلة.">Required documents for the equivalency file.</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="accordion-body">
+        <p data-en="You generally need: A copy of your high school certificate, a copy of your technical diploma, the 'Nata'ij Al-Tahseel' (Grades Sheet), birth certificate, national ID card, and 6 recent personal photos. Some faculties may require additional specific documents." 
+           data-ar="تحتاج بشكل عام إلى: صورة من شهادة الثانوية العامة، صورة من الدبلوم الفني، 'نتائج التحصيل' (كشف الدرجات)، شهادة الميلاد، بطاقة الرقم القومي، و 6 صور شخصية حديثة. قد تتطلب بعض الكليات مستندات إضافية محددة.">
+           You generally need: A copy of your high school certificate, a copy of your technical diploma, the 'Nata'ij Al-Tahseel' (Grades Sheet), birth certificate, national ID card, and 6 recent personal photos. Some faculties may require additional specific documents.
+        </p>
+      </div>
+    </div>
+
+    <!-- 4. Video Player Issue (Restored) -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span data-en="Why is the video player not working?" data-ar="لماذا مشغل الفيديو لا يعمل؟">Why is the video player not working?</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="accordion-body">
+        <p data-en="First, check your internet connection. If the issue persists, try clearing your browser cache or switching to a different browser (Chrome or Firefox are recommended). If you are using the mobile app, ensure you have the latest version installed." 
+           data-ar="أولاً، تحقق من اتصالك بالإنترنت. إذا استمرت المشكلة، حاول مسح ذاكرة التخزين المؤقت للمتصفح أو التبديل إلى متصفح آخر (يوصى بـ Chrome أو Firefox). إذا كنت تستخدم تطبيق الجوال، تأكد من تثبيت أحدث إصدار.">
+           First, check your internet connection. If the issue persists, try clearing your browser cache or switching to a different browser (Chrome or Firefox are recommended). If you are using the mobile app, ensure you have the latest version installed.
+        </p>
+      </div>
+    </div>
+
+    <!-- 5. Change Email (Restored) -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span data-en="How to change my registered email address." data-ar="كيف أغير عنوان البريد الإلكتروني المسجل؟">How to change my registered email address.</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="accordion-body">
+        <p data-en="Currently, email changes must be processed by our support team for security reasons. Please contact us via the 'Contact Support' button below or send us a message on WhatsApp with your old email, new email, and a copy of your ID." 
+           data-ar="حالياً، يجب معالجة تغييرات البريد الإلكتروني من قبل فريق الدعم لدينا لأسباب أمنية. يرجى الاتصال بنا عبر زر 'اتصل بالدعم' أدناه أو أرسل لنا رسالة على واتساب مع بريدك القديم والجديد وصورة من بطاقتك الشخصية.">
+           Currently, email changes must be processed by our support team for security reasons. Please contact us via the 'Contact Support' button below or send us a message on WhatsApp with your old email, new email, and a copy of your ID.
+        </p>
+      </div>
+    </div>
+
+    <!-- 6. Exam Schedule (Restored) -->
+    <div class="accordion-item">
+      <button class="accordion-header">
+        <span data-en="Where can I find the exam schedule?" data-ar="أين يمكنني العثور على جدول الامتحانات؟">Where can I find the exam schedule?</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="accordion-body">
+        <p data-en="The exam schedule is published in your 'Dashboard' under the 'Exams' section. It is updated regularly by the administration. Make sure to check it weekly for any changes in dates or locations." 
+           data-ar="نُشر جدول الامتحانات في 'لوحة التحكم' الخاصة بك تحت قسم 'الامتحانات'. يتم تحديثه بانتظام من قبل الإدارة. تأكد من مراجعته أسبوعياً لأي تغييرات في التواريخ أو الأماكن.">
+           The exam schedule is published in your 'Dashboard' under the 'Exams' section. It is updated regularly by the administration. Make sure to check it weekly for any changes in dates or locations.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Contact CTA -->
+  <div class="contact-cta">
+    <h2 data-en="Still need help?" data-ar="ما زلت بحاجة للمساعدة؟">Still need help?</h2>
+    <p data-en="Can't find the answer you're looking for? Our support team is ready to assist you." data-ar="لم تجد الإجابة التي تبحث عنها؟ فريق الدعم لدينا جاهز لمساعدتك.">Can't find the answer you're looking for? Our support team is ready to assist you.</p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="index.html#contact" class="btn btn-primary">
+        <i class="fa-solid fa-envelope"></i> <span data-en="Contact Support" data-ar="اتصل بالدعم">Contact Support</span>
+      </a>
+      <a href="https://wa.me/201032626508" target="_blank" class="btn btn-whatsapp">
+        <i class="fa-brands fa-whatsapp"></i> <span data-en="Chat on WhatsApp" data-ar="محادثة واتساب">Chat on WhatsApp</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<footer class="new-footer">
+  <p>&copy; 2026 EquivaPath. All rights reserved.</p>
+</footer>
+
+<script>
+  // Language Toggle Logic
+  let currentLang = 'en';
+  
+  function toggleLanguage() {
+    const html = document.documentElement;
+    const btnText = document.getElementById('langBtnText');
+    const elements = document.querySelectorAll('[data-en]');
+    
+    if (currentLang === 'en') {
+      // Switch to Arabic
+      currentLang = 'ar';
+      html.setAttribute('dir', 'rtl');
+      html.setAttribute('lang', 'ar');
+      btnText.innerText = 'English';
+      
+      // Swap text content
+      elements.forEach(el => {
+        el.innerText = el.getAttribute('data-ar');
+      });
+    } else {
+      // Switch to English
+      currentLang = 'en';
+      html.setAttribute('dir', 'ltr');
+      html.setAttribute('lang', 'en');
+      btnText.innerText = 'العربية';
+      
+      // Swap text content
+      elements.forEach(el => {
+        el.innerText = el.getAttribute('data-en');
+      });
+    }
+  }
+
+  // Accordion Logic
+  const accordions = document.querySelectorAll('.accordion-header');
+
+  accordions.forEach(acc => {
+    acc.addEventListener('click', function() {
+      const item = this.parentElement;
+      item.classList.toggle('active');
+
+      const panel = this.nextElementSibling;
+      if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
+      } else {
+        panel.style.maxHeight = panel.scrollHeight + "px";
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

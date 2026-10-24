@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - EquivaPath</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-glow: rgba(59,130,246,0.25);
+    --bg-main: #020617;
+    --bg-section: #0f172a;
+    --card: #111827;
+    --card-hover: #1a2332;
+    --border: #1e293b;
+    --text: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --success: #22c55e;
+    --danger: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-main); color: var(--text);
+    min-height: 100vh; overflow-x: hidden;
+  }
+  a { color: var(--primary); text-decoration: none; }
+
+  /* === خلفية متحركة === */
+  .bg-glow {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bg-glow::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px;
+    top: 5%; right: 20%;
+    background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%);
+    animation: floatA 8s ease-in-out infinite;
+  }
+  .bg-glow::after {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    bottom: 10%; left: 5%;
+    background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+    animation: floatA 10s ease-in-out infinite reverse;
+  }
+  @keyframes floatA {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 15px) scale(0.95); }
+  }
+
+  /* === شبكة خلفية === */
+  .bg-grid {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 50% 20%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 20%, black 20%, transparent 70%);
+  }
+
+  /* === النافبار === */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(2,6,23,0.8); backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between; height: 70px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem;
+  }
+  .nav-logo span {
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 0.25rem; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); font-weight: 500; font-size: 0.9rem;
+    padding: 0.45rem 1rem; border-radius: 8px;
+    transition: all 0.25s;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  /* === الأزرار === */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.65rem 1.5rem; border-radius: 10px; font-weight: 600;
+    font-size: 0.9rem; font-family: inherit; border: none; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+  }
+  .btn::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .btn:hover::after { opacity: 1; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), #4f46e5);
+    color: #fff;
+    box-shadow: 0 0 24px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 40px rgba(59,130,246,0.4), 0 8px 24px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-lg { padding: 0.9rem 2rem; font-size: 1rem; border-radius: 12px; }
+  .btn-full { width: 100%; }
+  .btn i { font-size: 0.9rem; }
+
+  /* === الصفحة === */
+  .page-container {
+    max-width: 460px; margin: 0 auto; padding: 120px 1.5rem 5rem;
+    position: relative; z-index: 1;
+  }
+
+  /* === الهيدر === */
+  .page-header { text-align: center; margin-bottom: 2.5rem; }
+  .login-avatar {
+    width: 72px; height: 72px; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15));
+    border: 1px solid rgba(139,92,246,0.2);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.6rem; color: #8b5cf6;
+    position: relative;
+  }
+  .login-avatar::after {
+    content: ''; position: absolute; inset: -4px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.2), transparent, rgba(59,130,246,0.2));
+    z-index: -1; opacity: 0.5;
+    animation: avatarPulse 3s ease-in-out infinite;
+  }
+  @keyframes avatarPulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+  }
+  .page-title {
+    font-size: 2rem; font-weight: 900; letter-spacing: -0.8px;
+    line-height: 1.2; margin-bottom: 0.5rem;
+  }
+  .page-title span {
+    background: linear-gradient(135deg, #8b5cf6, var(--primary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .page-desc {
+    color: var(--text-secondary); font-size: 1rem; line-height: 1.6;
+  }
+
+  /* === الكارت === */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .form-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, #8b5cf6, var(--primary), transparent);
+    opacity: 0.6;
+  }
+
+  /* === الفورم === */
+  .form-group { margin-bottom: 1.5rem; }
+  .form-label {
+    display: flex; align-items: center; gap: 0.4rem;
+    margin-bottom: 0.55rem; font-weight: 600; font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .form-label i { font-size: 0.8rem; color: var(--text-muted); }
+  .input-wrapper { position: relative; }
+  .input-icon {
+    position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); pointer-events: none; transition: color 0.3s;
+  }
+  .input-icon i { font-size: 0.95rem; }
+  .input-wrapper:focus-within .input-icon { color: var(--primary); }
+  .form-input {
+    width: 100%; padding: 0.85rem 1rem 0.85rem 2.75rem;
+    border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg-main); color: var(--text);
+    font-size: 0.95rem; font-family: inherit; transition: all 0.3s;
+  }
+  .form-input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  .form-input::placeholder { color: var(--text-muted); }
+
+  /* زر إظهار الباسورد */
+  .toggle-pass {
+    position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; padding: 4px; transition: color 0.2s;
+  }
+  .toggle-pass:hover { color: var(--text-secondary); }
+  .toggle-pass i { font-size: 0.9rem; }
+
+  .form-footer {
+    text-align: center; margin-top: 1.5rem;
+    color: var(--text-muted); font-size: 0.9rem;
+  }
+  .form-footer a { font-weight: 600; transition: color 0.2s; }
+  .form-footer a:hover { color: var(--text); }
+
+  /* === قوة الباسورد === */
+  .pass-strength {
+    display: flex; gap: 4px; margin-top: 0.5rem; height: 3px;
+  }
+  .pass-bar {
+    flex: 1; border-radius: 3px;
+    background: var(--border); transition: background 0.3s;
+  }
+  .pass-bar.active.weak { background: var(--danger); }
+  .pass-bar.active.medium { background: #f59e0b; }
+  .pass-bar.active.strong { background: var(--success); }
+  .pass-hint {
+    font-size: 0.75rem; margin-top: 0.35rem; color: var(--text-muted);
+    transition: color 0.3s;
+  }
+  .pass-hint.weak { color: var(--danger); }
+  .pass-hint.medium { color: #f59e0b; }
+  .pass-hint.strong { color: var(--success); }
+
+  /* === التوست === */
+  .toast-container {
+    position: fixed; top: 85px; right: 20px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+  .toast {
+    padding: 0.9rem 1.3rem; border-radius: 12px;
+    font-size: 0.88rem; font-weight: 500; font-family: inherit;
+    display: flex; align-items: center; gap: 0.6rem;
+    animation: toastIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(12px);
+  }
+  .toast i { font-size: 1rem; flex-shrink: 0; }
+  .toast.success {
+    background: rgba(34,197,94,0.12); color: var(--success);
+    border: 1px solid rgba(34,197,94,0.25);
+  }
+  .toast.error {
+    background: rgba(239,68,68,0.12); color: var(--danger);
+    border: 1px solid rgba(239,68,68,0.25);
+  }
+  @keyframes toastIn {
+    from { transform: translateX(120px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* === سبينر === */
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid transparent; border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* === أنيميشن دخول === */
+  .page-container > * {
+    animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .page-container > *:nth-child(1) { animation-delay: 0.05s; }
+  .page-container > *:nth-child(2) { animation-delay: 0.15s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .page-container { padding: 110px 1.25rem 4rem; }
+    .page-title { font-size: 1.7rem; }
+    .form-card { padding: 2rem; }
+    .nav-links a { padding: 0.4rem 0.6rem; font-size: 0.82rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <i class="fa-solid fa-graduation-cap"></i>
+    </div>
+    <span>EquivaPath</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="page-container">
+  <div class="page-header">
+    <div class="login-avatar">
+      <i class="fa-solid fa-user-plus"></i>
+    </div>
+    <h1 class="page-title">Create <span>Account</span></h1>
+    <p class="page-desc">Join EquivaPath and start your equivalency journey today.</p>
+  </div>
+
+  <div class="form-card">
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fa-solid fa-user"></i>
+          Full Name
+        </label>
+        <div class="input-wrapper">
+          <span class="input-icon"><i class="fa-solid fa-id-card"></i></span>
+          <input type="text" id="name" class="form-input" placeholder="Enter your full name" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fa-solid fa-envelope"></i>
+          Email Address
+        </label>
+        <div class="input-wrapper">
+          <span class="input-icon"><i class="fa-solid fa-at"></i></span>
+          <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fa-solid fa-lock"></i>
+          Password
+        </label>
+        <div class="input-wrapper">
+          <span class="input-icon"><i class="fa-solid fa-key"></i></span>
+          <input type="password" id="password" class="form-input" placeholder="Create a password" minlength="6" required>
+          <button type="button" class="toggle-pass" id="togglePass" aria-label="Toggle password visibility">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+        <div class="pass-strength" id="passStrength">
+          <div class="pass-bar" id="bar1"></div>
+          <div class="pass-bar" id="bar2"></div>
+          <div class="pass-bar" id="bar3"></div>
+          <div class="pass-bar" id="bar4"></div>
+        </div>
+        <div class="pass-hint" id="passHint"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fa-solid fa-phone"></i>
+          Phone Number
+        </label>
+        <div class="input-wrapper">
+          <span class="input-icon"><i class="fa-solid fa-mobile-screen"></i></span>
+          <input type="tel" id="phone" class="form-input" placeholder="Enter your phone number" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg" id="regBtn">
+        <i class="fa-solid fa-rocket"></i>
+        Create Account
+      </button>
+    </form>
+
+    <div class="form-footer">
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* === إظهار/إخفاء الباسورد === */
+  const togglePass = document.getElementById('togglePass');
+  const passInput = document.getElementById('password');
+  togglePass.addEventListener('click', function() {
+    const isPass = passInput.type === 'password';
+    passInput.type = isPass ? 'text' : 'password';
+    this.querySelector('i').className = isPass ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+  });
+
+  /* === قوة الباسورد === */
+  passInput.addEventListener('input', function() {
+    const val = this.value;
+    const bars = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
+    const hint = document.getElementById('passHint');
+    let score = 0;
+
+    if (val.length >= 6) score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+    if (/[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) score++;
+
+    bars.forEach((bar, i) => {
+      bar.className = 'pass-bar';
+      if (i < score) bar.classList.add('active');
+    });
+
+    if (val.length === 0) {
+      hint.textContent = '';
+      hint.className = 'pass-hint';
+    } else if (score <= 1) {
+      bars.forEach(b => { if (b.classList.contains('active')) b.classList.add('weak'); });
+      hint.textContent = 'Weak — add uppercase, numbers, or symbols';
+      hint.className = 'pass-hint weak';
+    } else if (score <= 2) {
+      bars.forEach(b => { if (b.classList.contains('active')) b.classList.add('medium'); });
+      hint.textContent = 'Fair — try making it longer';
+      hint.className = 'pass-hint medium';
+    } else {
+      bars.forEach(b => { if (b.classList.contains('active')) b.classList.add('strong'); });
+      hint.textContent = 'Strong password';
+      hint.className = 'pass-hint strong';
+    }
+  });
+
+  /* === Toast === */
+  function showToast(msg, type) {
+    const c = document.getElementById('toastContainer');
+    const iconName = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<i class="fa-solid ${iconName}"></i><span>${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(60px)'; t.style.transition = 'all 0.3s'; }, 3500);
+    setTimeout(() => t.remove(), 4000);
+  }
+
+  /* === منطق الحماية: لا يظهر التسجيل الا بعد الفحص === */
+  document.addEventListener('DOMContentLoaded', function() {
+    // التحقق من وجود "Pending College" (يعني جاي من Eligibility)
+    const pendingCollege = localStorage.getItem('equivapath_pending_college');
+
+    if (!pendingCollege) {
+      // لو مفيش علم إنه جاي من الفحص، يمنعه من التسجيل ويرده للرئيسية
+      showToast('Please complete the eligibility check first to register.', 'error');
+      
+      // واخفاء محتوى الصفحة عشان يبان واضح إنه مفيش شيء
+      document.querySelector('.page-container').style.opacity = '0';
+      document.querySelector('.page-container').style.pointerEvents = 'none';
+      
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+    }
+  });
+
+  /* === الفورم === */
+  document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('regBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Creating account...';
+
+    // جلب الكلية المحفوظة من Eligibility
+    const selectedCollege = localStorage.getItem('equivapath_pending_college') || localStorage.getItem('equivapath_college');
+
+    const data = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value,
+      phone: document.getElementById('phone').value,
+      selectedCollege: selectedCollege // نرسل الكلية للسيرفر عشان يخزنها في الحساب
+    };
+
+    try {
+      const res = await fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      
+      if (res.ok) {
+        localStorage.setItem('equivapath_token', result.token);
+        localStorage.setItem('equivapath_user', JSON.stringify(result.user));
+        
+        // بعد التسجيل الناجح، نمسح "Pending College" عشان لو عمل Logout ومحاول يرجع التسجيل، هيقفه (زي ما طلبت)
+        localStorage.removeItem('equivapath_pending_college');
+
+        showToast('Registration successful!', 'success');
+        
+        // بعد التسجيل، نوديه للمواد مباشرة
+        setTimeout(() => window.location.href = 'subject.html', 1000);
+      } else {
+        showToast(result.error, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Create Account';
+      }
+    } catch (err) {
+      showToast('Cannot connect to server', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-rocket"></i> Create Account';
+    }
+  });
+</script>
+</body>
+</html>

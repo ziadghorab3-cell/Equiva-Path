@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subject Details - EquivaPath</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --bg-main: #020617;
+    --bg-section: #0f172a;
+    --card: #111827;
+    --border: #1f2933;
+    --text: #ffffff;
+    --text-secondary: #9ca3af;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --purple: #8b5cf6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-main);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--primary-hover); }
+
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 70px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.1rem;
+  }
+  .nav-logo span {
+    font-size: 1.5rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+  .nav-links a {
+    color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;
+    transition: color 0.2s; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--primary); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 600;
+    font-size: 0.95rem; border: none; cursor: pointer;
+    transition: all 0.25s ease; font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 0 20px rgba(59,130,246,0.3);
+  }
+  .btn-primary:hover {
+    background: var(--primary-hover); color: #fff;
+    box-shadow: 0 0 30px rgba(59,130,246,0.5);
+    transform: translateY(-1px);
+  }
+  .btn-sm { padding: 0.5rem 1.2rem; font-size: 0.85rem; border-radius: 8px; }
+  .btn-lg { padding: 0.85rem 2rem; font-size: 1.1rem; border-radius: 10px; }
+  .btn-full { width: 100%; justify-content: center; }
+  .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    justify-content: center;
+    padding: 120px 2rem 4rem;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
+    color: var(--primary); margin-bottom: 1.5rem; font-weight: 600;
+  }
+  .hero-title {
+    font-size: 3.5rem; font-weight: 900; line-height: 1.1;
+    letter-spacing: -1.5px; margin-bottom: 1.5rem;
+  }
+  .hero-title span {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .cards-wrapper {
+    max-height: 0; opacity: 0; overflow: hidden;
+    transition: max-height 0.7s ease, opacity 0.5s ease 0.1s;
+    padding: 0 2rem;
+  }
+  .cards-wrapper.open { max-height: 1200px; opacity: 1; padding-bottom: 4rem; }
+  .cards-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+  }
+  .subject-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2.5rem 2rem; text-align: center;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .subject-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 12px 40px rgba(59,130,246,0.08);
+  }
+  .card-icon {
+    width: 60px; height: 60px; border-radius: 16px;
+    background: rgba(59,130,246,0.12);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem; transition: background 0.3s;
+  }
+  .subject-card:hover .card-icon { background: rgba(59,130,246,0.2); }
+  .card-icon svg { width: 26px; height: 26px; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .subject-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .subject-card p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .card-btn svg { width: 15px; height: 15px; }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeUp 0.35s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .sub-page { padding: 110px 2rem 4rem; max-width: 780px; margin: 0 auto; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;
+    margin-bottom: 2rem; transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--primary); }
+  .back-link i { font-size: 0.85rem; }
+  .page-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+  .page-desc { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+  .pdf-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 3rem 2rem; text-align: center;
+    max-width: 440px; margin: 0 auto;
+  }
+  .pdf-icon {
+    width: 80px; height: 80px; border-radius: 20px;
+    background: rgba(239,68,68,0.1);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .pdf-icon svg { width: 36px; height: 36px; stroke: var(--danger); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .lesson { margin-bottom: 2.5rem; }
+  .lesson:last-child { margin-bottom: 0; }
+  .lesson-header { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.85rem; }
+  .lesson-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(59,130,246,0.12); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 800; flex-shrink: 0;
+  }
+  .lesson-info h3 { font-size: 1rem; font-weight: 700; line-height: 1.3; }
+  .lesson-info span { color: var(--text-secondary); font-size: 0.82rem; }
+  .video-slot {
+    width: 100%; aspect-ratio: 16/9;
+    background: var(--card); border: 1.5px dashed var(--border);
+    border-radius: 14px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.75rem;
+    margin-left: 44px; transition: border-color 0.3s;
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .video-slot::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(59,130,246,0.06) 0%, transparent 70%);
+  }
+  .video-slot:hover { border-color: rgba(59,130,246,0.4); }
+  .play-circle {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(59,130,246,0.15); border: 2px solid rgba(59,130,246,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s, box-shadow 0.3s; z-index: 1;
+  }
+  .video-slot:hover .play-circle { transform: scale(1.1); box-shadow: 0 0 24px rgba(59,130,246,0.25); }
+  .play-circle svg { width: 20px; height: 20px; fill: var(--primary); stroke: none; margin-left: 2px; }
+  .video-slot span { color: var(--text-secondary); font-size: 0.82rem; z-index: 1; }
+  .video-slot iframe { width: 100%; height: 100%; border: none; border-radius: 14px; position: absolute; inset: 0; }
+
+  .links-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .link-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; text-align: center;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .link-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 30px rgba(59,130,246,0.08);
+  }
+  .link-card-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.15rem; line-height: 1.4; }
+  .link-card-sub { color: var(--text-secondary); font-size: 0.78rem; margin-bottom: 1.25rem; }
+  .link-btn svg { width: 14px; height: 14px; }
+  .link-card-year {
+    font-size: 1.6rem; font-weight: 900; letter-spacing: -0.5px;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .link-card-label { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1.25rem; }
+
+  .toast-container {
+    position: fixed; top: 85px; right: 20px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .toast {
+    padding: 0.85rem 1.25rem; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 500;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .toast.success { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+  .toast.error { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+  .toast.warning { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* ═══════════ LOCKED VIDEO OVERLAY ═══════════ */
+  .video-slot.locked-slot {
+    border-style: solid;
+    border-color: rgba(139,92,246,0.2);
+    cursor: pointer;
+  }
+  .video-slot.locked-slot:hover {
+    border-color: rgba(139,92,246,0.5);
+    box-shadow: 0 0 30px rgba(139,92,246,0.08);
+  }
+  .video-slot.locked-slot::before {
+    background: radial-gradient(ellipse at center, rgba(139,92,246,0.06) 0%, transparent 70%);
+  }
+  .locked-overlay {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.75rem;
+    background: rgba(2, 6, 23, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 14px;
+    transition: background 0.3s;
+  }
+  .video-slot.locked-slot:hover .locked-overlay {
+    background: rgba(2, 6, 23, 0.45);
+  }
+  .locked-overlay-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(139,92,246,0.15);
+    border: 2px solid rgba(139,92,246,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .video-slot.locked-slot:hover .locked-overlay-icon {
+    transform: scale(1.1);
+    box-shadow: 0 0 28px rgba(139,92,246,0.3);
+  }
+  .locked-overlay-icon i { font-size: 1.3rem; color: var(--purple); }
+  .locked-overlay span {
+    font-size: 0.85rem; font-weight: 600; color: var(--purple);
+    z-index: 6;
+  }
+
+  /* ═══════════ LOCKED LINK CARD ═══════════ */
+  .link-card.locked-card {
+    opacity: 0.65;
+  }
+  .link-card.locked-card:hover {
+    opacity: 0.9;
+    border-color: rgba(139,92,246,0.4);
+    box-shadow: 0 8px 30px rgba(139,92,246,0.08);
+  }
+  .locked-card-badge {
+    position: absolute; top: 10px; right: 10px;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(139,92,246,0.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .locked-card-badge i { font-size: 0.7rem; color: var(--purple); }
+  .btn-locked {
+    background: rgba(139,92,246,0.12);
+    color: var(--purple);
+    border: 1px solid rgba(139,92,246,0.25);
+    box-shadow: none;
+  }
+  .btn-locked:hover {
+    background: rgba(139,92,246,0.2);
+    color: var(--purple);
+    border-color: rgba(139,92,246,0.4);
+    box-shadow: 0 0 20px rgba(139,92,246,0.15);
+    transform: translateY(-1px);
+  }
+
+  /* ═══════════ SUBSCRIPTION MODAL ═══════════ */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+  }
+  .modal-overlay.active {
+    opacity: 1; visibility: visible;
+  }
+  .modal-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem 2rem 2rem;
+    max-width: 460px; width: 100%;
+    text-align: center;
+    position: relative;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 60px rgba(139,92,246,0.06);
+  }
+  .modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary); font-size: 1rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.3);
+    color: var(--danger);
+  }
+  .modal-lock-wrap {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15));
+    border: 2px solid rgba(139,92,246,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    animation: lockPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes lockPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(139,92,246,0.2); }
+    50% { box-shadow: 0 0 0 14px rgba(139,92,246,0); }
+  }
+  .modal-lock-wrap i { font-size: 2rem; color: var(--purple); }
+  .modal-content h2 {
+    font-size: 1.4rem; font-weight: 800; letter-spacing: -0.3px;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, var(--text), var(--text-secondary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .modal-content > p {
+    color: var(--text-secondary); font-size: 0.9rem;
+    line-height: 1.7; margin-bottom: 1.5rem;
+  }
+  .modal-payment-box {
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .modal-payment-box p {
+    color: var(--text-secondary); font-size: 0.88rem;
+    margin-bottom: 0.65rem; line-height: 1.6;
+  }
+  .modal-payment-box strong {
+    color: var(--primary); font-size: 1.15rem; font-weight: 800;
+  }
+  .modal-phone {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.1rem; font-weight: 800;
+    color: var(--text); letter-spacing: 0.5px;
+    direction: ltr;
+  }
+  .modal-phone i { color: var(--primary); font-size: 0.95rem; }
+  .modal-note {
+    color: var(--text-secondary) !important; font-size: 0.82rem !important;
+    margin-bottom: 1.75rem !important;
+    font-style: italic;
+  }
+  .modal-buttons {
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .btn-whatsapp {
+    background: #25D366; color: #fff;
+    box-shadow: 0 0 25px rgba(37,211,102,0.25);
+    padding: 0.85rem 1.5rem; font-size: 1rem;
+    border-radius: 12px; font-weight: 700;
+    justify-content: center;
+  }
+  .btn-whatsapp:hover {
+    background: #1fb855; color: #fff;
+    box-shadow: 0 0 35px rgba(37,211,102,0.4);
+    transform: translateY(-2px);
+  }
+  .btn-whatsapp i { font-size: 1.2rem; }
+  .btn-modal-close {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1.5rem; font-size: 0.95rem;
+    border-radius: 12px; font-weight: 600;
+    justify-content: center;
+  }
+  .btn-modal-close:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  /* ═══════════ FREE BADGE ON CARDS ═══════════ */
+  .free-badge {
+    position: absolute; top: 10px; right: 10px;
+    padding: 0.2rem 0.6rem; border-radius: 6px;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.25);
+    font-size: 0.68rem; font-weight: 700; color: var(--success);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-title { font-size: 2.5rem; }
+    .cards-grid { max-width: 400px; }
+    .links-grid { grid-template-columns: repeat(2, 1fr); }
+    .video-slot { margin-left: 0; }
+    .nav-links { gap: 0.75rem; }
+    .nav-links a { font-size: 0.85rem; }
+    .page-title { font-size: 1.6rem; }
+    .sub-page { padding: 100px 1.25rem 3rem; }
+    .modal-content { padding: 2rem 1.5rem 1.75rem; }
+    .modal-content h2 { font-size: 1.25rem; }
+  }
+  @media (max-width: 400px) {
+    .links-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- === NAVBAR === -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <span>EquivaPath</span>
+  </a>
+  <div class="nav-links">
+    <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a href="subject.html" class="active" id="navSubjects"><i class="fa-solid fa-book-open"></i> Subjects</a>
+    <a href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════ SUBSCRIPTION MODAL ═══════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <button class="modal-close" id="modalCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-lock-wrap"><i class="fa-solid fa-lock"></i></div>
+    <h2>Unlock Premium Content</h2>
+    <p>To enjoy all videos and PDFs and get the best learning experience, please subscribe to the platform.</p>
+    <div class="modal-payment-box">
+      <p>Transfer <strong>150</strong> EGP to this number:</p>
+      <div class="modal-phone">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+        <span>01032626508</span>
+      </div>
+    </div>
+    <p class="modal-note">After payment, contact us to activate your subscription.</p>
+    <div class="modal-buttons">
+      <a href="https://wa.me/201032626508" target="_blank" class="btn btn-whatsapp">
+        <i class="fa-brands fa-whatsapp"></i>
+        Contact Us on WhatsApp
+      </a>
+      <button class="btn btn-modal-close" id="modalDismissBtn">
+        <i class="fa-solid fa-xmark"></i>
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VIEW: MAIN ═══════════ -->
+<div id="viewMain" class="view active">
+  <section class="hero">
+    <div>
+      <div class="hero-badge"><i class="fa-solid fa-shapes"></i> Geography — Semester 2</div>
+      <h1 class="hero-title">Subject <span>Details</span></h1>
+      <button class="btn btn-primary btn-lg" id="openBtn" style="margin-top:1rem;">
+        <i class="fa-solid fa-lock-open"></i>
+        Open Subject
+      </button>
+    </div>
+  </section>
+
+  <div class="cards-wrapper" id="cardsWrapper">
+    <div class="cards-grid">
+
+      <div class="subject-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        </div>
+        <h3>PDF Materials</h3>
+        <p>View course documents</p>
+        <button class="btn btn-primary btn-sm card-btn" onclick="showView('viewPdf')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          Open PDF
+        </button>
+      </div>
+
+      <div class="subject-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>
+        </div>
+        <h3>Video Lessons</h3>
+        <p>Watch recorded lectures</p>
+        <button class="btn btn-primary btn-sm card-btn" onclick="showView('viewVideos')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5,3 19,12 5,21"></polygon></svg>
+          Watch Lessons
+        </button>
+      </div>
+
+      <div class="subject-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><line x1="8" y1="7" x2="16" y2="7"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        </div>
+        <h3>Question Banks</h3>
+        <p>Download question sets</p>
+        <button class="btn btn-primary btn-sm card-btn" onclick="showView('viewBanks')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          View Banks
+        </button>
+      </div>
+
+      <div class="subject-card">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <h3>Past Exams</h3>
+        <p>Exams from previous years</p>
+        <button class="btn btn-primary btn-sm card-btn" onclick="showView('viewExams')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          View Exams
+        </button>
+      </div>
+
+      <div class="subject-card" style="border-color: rgba(34,197,94,0.2);">
+        <div class="card-icon" style="background: rgba(34,197,94,0.12);">
+          <i class="fa-solid fa-clipboard-check" style="font-size: 26px; color: #22c55e;"></i>
+        </div>
+        <h3>Take Quiz</h3>
+        <p>Test your knowledge</p>
+        <button class="btn btn-sm card-btn" onclick="showView('viewQuiz')" style="background: var(--success); color: white; box-shadow: 0 0 20px rgba(34,197,94,0.3);">
+          <i class="fa-solid fa-arrow-right" style="font-size: 14px;"></i>
+          Start Quiz
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VIEW: PDF ═══════════ -->
+<div id="viewPdf" class="view">
+  <div class="sub-page">
+    <a href="#" class="back-link" onclick="showView('viewMain');return false;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Subjects
+    </a>
+    <div class="pdf-card">
+      <div class="pdf-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+      </div>
+      <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:0.4rem;">PDF Materials</h2>
+      <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:2rem;">Access the course document for this subject</p>
+      <a id="pdfLink" href="الجغرافيا 3ث - كن مجد.pdf" target="_blank" class="btn btn-primary btn-lg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        Open PDF
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ VIEW: VIDEOS ═══════════ -->
+<div id="viewVideos" class="view">
+  <div class="sub-page">
+    <a href="#" class="back-link" onclick="showView('viewMain');return false;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Subjects
+    </a>
+    <h2 class="page-title">Video Lessons</h2>
+    <p class="page-desc">Watch each lesson at your own pace — first 2 lessons are free</p>
+    <div id="videosContainer"></div>
+  </div>
+</div>
+
+<!-- ═══════════ VIEW: QUESTION BANKS ═══════════ -->
+<div id="viewBanks" class="view">
+  <div class="sub-page">
+    <a href="#" class="back-link" onclick="showView('viewMain');return false;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Subjects
+    </a>
+    <h2 class="page-title">Question Banks</h2>
+    <p class="page-desc">Download question bank PDFs for each topic — first one is free</p>
+    <div class="links-grid" id="banksContainer"></div>
+  </div>
+</div>
+
+<!-- ═══════════ VIEW: EXAMS ═══════════ -->
+<div id="viewExams" class="view">
+  <div class="sub-page">
+    <a href="#" class="back-link" onclick="showView('viewMain');return false;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Subjects
+    </a>
+    <h2 class="page-title">Past Exams</h2>
+    <p class="page-desc">Access exam papers from previous years — first one is free</p>
+    <div class="links-grid" id="examsContainer"></div>
+  </div>
+</div>
+
+<!-- ═══════════ VIEW: QUIZ ═══════════ -->
+<div id="viewQuiz" class="view">
+  <div class="sub-page">
+    <a href="#" class="back-link" onclick="showView('viewMain');return false;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Subjects
+    </a>
+    <div class="pdf-card" style="border-color: rgba(34,197,94,0.3); box-shadow: 0 0 40px rgba(34,197,94,0.1);">
+      <div class="pdf-icon" style="background: rgba(34,197,94,0.1);">
+        <i class="fa-solid fa-clipboard-check" style="font-size: 36px; color: #22c55e;"></i>
+      </div>
+      <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:0.4rem;">Subject Quiz</h2>
+      <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:2rem;">Test your understanding of this subject's material. Make sure you reviewed the videos and PDFs first!</p>
+      <a href="quiz geography.html" class="btn btn-lg" style="background: var(--success); color: white; box-shadow: 0 0 20px rgba(34,197,94,0.3);">
+        <i class="fa-solid fa-play"></i>
+        Go to Quiz Page
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════ CONFIGURATION ═══════════ */
+var CONFIG = {
+  pdf: { url: 'الجغرافيا 3ث - كن مجد.pdf' },
+  FREE_VIDEOS: 2,
+  FREE_BANKS: 1,
+  FREE_EXAMS: 1,
+  videos: [
+    { title: 'Introduction to Calculus', duration: '45 min', embedUrl: '' },
+    { title: 'Limits and Continuity',     duration: '52 min', embedUrl: '' },
+    { title: 'Derivatives Deep Dive',    duration: '58 min', embedUrl: '' },
+    { title: 'Integration Techniques',   duration: '49 min', embedUrl: '' }
+  ],
+  questionBanks: [
+    { name: 'Limits & Continuity',         url: 'c:\Users\DELL\Downloads\تحميل_النموذج_الاسترشادي_الثالث_في_الجغرافيا_للثانوية_العامة_2026_من_وزارة_التعليم_PDF.pdf' },
+    { name: 'Derivatives',                  url: 'https://example.com/qb-derivatives.pdf' },
+    { name: 'Integration',                  url: 'https://example.com/qb-integration.pdf' },
+    { name: 'Applications of Derivatives',  url: 'https://example.com/qb-applications.pdf' },
+    { name: 'Trigonometry',                 url: 'https://example.com/qb-trigonometry.pdf' },
+    { name: 'Sequences & Series',           url: 'https://example.com/qb-sequences.pdf' },
+    { name: 'Mixed Review',                 url: 'https://example.com/qb-mixed.pdf' },
+    { name: 'Final Exam Prep',              url: 'https://example.com/qb-final.pdf' }
+  ],
+  exams: [
+    { year: 2017, url: 'امتحان جغرافيا معادلة تجارة 2022 الفترة الأولى - جامعة القاهرة.pdf' },
+    { year: 2018, url: 'https://example.com/exam-2018.pdf' },
+    { year: 2019, url: 'https://example.com/exam-2019.pdf' },
+    { year: 2020, url: 'https://example.com/exam-2020.pdf' },
+    { year: 2021, url: 'https://example.com/exam-2021.pdf' },
+    { year: 2022, url: 'https://example.com/exam-2022.pdf' },
+    { year: 2023, url: 'https://example.com/exam-2023.pdf' },
+    { year: 2024, url: 'https://example.com/exam-2024.pdf' },
+    { year: 2025, url: 'حل امتحان الفيزياء (عربي) للمعادلة لعام 2025 .pdf' }
+  ]
+};
+
+/* ═══════════ TOAST ═══════════ */
+function showToast(message, type) {
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  var icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-circle-xmark' : 'fa-circle-info');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = '<i class="fa-solid ' + icon + '"></i> ' + message;
+  container.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 4000);
+}
+
+/* ═══════════ MODAL ═══════════ */
+var modalOverlay = document.getElementById('modalOverlay');
+var modalCloseBtn = document.getElementById('modalCloseBtn');
+var modalDismissBtn = document.getElementById('modalDismissBtn');
+
+function showModal() {
+  modalOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function hideModal() {
+  modalOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+modalCloseBtn.addEventListener('click', hideModal);
+modalDismissBtn.addEventListener('click', hideModal);
+modalOverlay.addEventListener('click', function(e) {
+  if (e.target === modalOverlay) hideModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && modalOverlay.classList.contains('active')) hideModal();
+});
+
+/* ═══════════ VIEW SWITCHING ═══════════ */
+var currentView = 'viewMain';
+
+function showView(viewId) {
+  if (currentView === viewId) return;
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.getElementById(viewId).classList.add('active');
+  currentView = viewId;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (viewId === 'viewVideos') renderVideos();
+  if (viewId === 'viewBanks')  renderBanks();
+  if (viewId === 'viewExams')  renderExams();
+}
+
+document.getElementById('navSubjects').addEventListener('click', function(e) {
+  e.preventDefault();
+  showView('viewMain');
+});
+
+/* ═══════════ OPEN/CLOSE SUBJECT CARDS ═══════════ */
+var openBtn = document.getElementById('openBtn');
+var cardsWrapper = document.getElementById('cardsWrapper');
+var isOpen = false;
+
+openBtn.addEventListener('click', function() {
+  isOpen = !isOpen;
+  if (isOpen) {
+    cardsWrapper.classList.add('open');
+    openBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Close Subject';
+    setTimeout(function() { cardsWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 300);
+  } else {
+    cardsWrapper.classList.remove('open');
+    openBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Open Subject';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
+
+document.getElementById('pdfLink').href = CONFIG.pdf.url;
+
+/* ═══════════ RENDER: VIDEOS ═══════════ */
+function renderVideos() {
+  var container = document.getElementById('videosContainer');
+  var html = '';
+  CONFIG.videos.forEach(function(v, i) {
+    var isLocked = i >= CONFIG.FREE_VIDEOS;
+    var num = String(i + 1).padStart(2, '0');
+    var media;
+
+    if (isLocked) {
+      media = '<div class="locked-overlay">' +
+                '<div class="locked-overlay-icon"><i class="fa-solid fa-lock"></i></div>' +
+                '<span>Premium Content</span>' +
+              '</div>';
+    } else {
+      media = v.embedUrl
+        ? '<iframe src="' + v.embedUrl + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+        : '<div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div><span>Click to play</span>';
+    }
+
+    html += '<div class="lesson">' +
+              '<div class="lesson-header">' +
+                '<span class="lesson-num">' + num + '</span>' +
+                '<div class="lesson-info">' +
+                  '<h3>' + v.title + '</h3>' +
+                  '<span>' + v.duration + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="video-slot' + (isLocked ? ' locked-slot' : '') + '" ' +
+                (isLocked ? 'data-locked="true"' : '') + '>' +
+                media +
+              '</div>' +
+            '</div>';
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('.video-slot[data-locked="true"]').forEach(function(slot) {
+    slot.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showModal();
+    });
+  });
+}
+
+/* ═══════════ RENDER: QUESTION BANKS ═══════════ */
+function renderBanks() {
+  var container = document.getElementById('banksContainer');
+  var html = '';
+
+  CONFIG.questionBanks.forEach(function(bank, i) {
+    var isLocked = i >= CONFIG.FREE_BANKS;
+    var badge = isLocked
+      ? '<div class="locked-card-badge"><i class="fa-solid fa-lock"></i></div>'
+      : '<div class="free-badge">Free</div>';
+
+    var actionHtml;
+    if (isLocked) {
+      actionHtml = '<button class="btn btn-sm btn-locked" data-locked-pdf="true">' +
+                     '<i class="fa-solid fa-lock" style="font-size:12px;"></i> Locked' +
+                   '</button>';
+    } else {
+      actionHtml = '<a href="' + bank.url + '" target="_blank" class="btn btn-primary btn-sm link-btn">' +
+                     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+                     'Open PDF</a>';
+    }
+
+    html += '<div class="link-card' + (isLocked ? ' locked-card' : '') + '">' +
+              badge +
+              '<div class="link-card-title">' + bank.name + '</div>' +
+              '<div class="link-card-sub">PDF</div>' +
+              actionHtml +
+            '</div>';
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('[data-locked-pdf="true"]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showModal();
+    });
+  });
+}
+
+/* ═══════════ RENDER: EXAMS ═══════════ */
+function renderExams() {
+  var container = document.getElementById('examsContainer');
+  var html = '';
+
+  CONFIG.exams.forEach(function(exam, i) {
+    var isLocked = i >= CONFIG.FREE_EXAMS;
+    var badge = isLocked
+      ? '<div class="locked-card-badge"><i class="fa-solid fa-lock"></i></div>'
+      : '<div class="free-badge">Free</div>';
+
+    var actionHtml;
+    if (isLocked) {
+      actionHtml = '<button class="btn btn-sm btn-locked" data-locked-pdf="true">' +
+                     '<i class="fa-solid fa-lock" style="font-size:12px;"></i> Locked' +
+                   '</button>';
+    } else {
+      actionHtml = '<a href="' + exam.url + '" target="_blank" class="btn btn-primary btn-sm link-btn">' +
+                     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+                     'Open Exam</a>';
+    }
+
+    html += '<div class="link-card' + (isLocked ? ' locked-card' : '') + '">' +
+              badge +
+              '<div class="link-card-year">' + exam.year + '</div>' +
+              '<div class="link-card-label">Exam Paper</div>' +
+              actionHtml +
+            '</div>';
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('[data-locked-pdf="true"]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showModal();
+    });
+  });
+}
+</script>
+</body>
+</html>

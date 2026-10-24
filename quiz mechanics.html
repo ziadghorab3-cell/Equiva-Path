@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mechanics Quiz - EquivaPath</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --bg-main: #020617;
+  --bg-section: #0f172a;
+  --card: #111827;
+  --card-hover: #1a2332;
+  --border: #1f2933;
+  --text: #ffffff;
+  --text-sec: #9ca3af;
+  --text-dim: #6b7280;
+  --success: #22c55e;
+  --success-bg: rgba(34,197,94,0.12);
+  --danger: #ef4444;
+  --danger-bg: rgba(239,68,68,0.12);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245,158,11,0.12);
+  --purple: #8b5cf6;
+  --purple-bg: rgba(139,92,246,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg-main);color:var(--text);min-height:100vh}
+a{color:var(--primary);text-decoration:none}a:hover{color:var(--primary-hover)}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(2,6,23,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:66px}
+.nav-logo{display:flex;align-items:center;gap:0.75rem}
+.nav-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem}
+.nav-logo span{font-size:1.4rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-r{display:flex;gap:0.4rem;align-items:center}
+.nav-r a{color:var(--text-sec);font-weight:500;font-size:0.88rem;padding:0.4rem 0.8rem;border-radius:8px;display:flex;align-items:center;gap:0.4rem}
+.nav-r a:hover{color:var(--text);background:rgba(255,255,255,0.05)}
+.btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1.1rem;border-radius:8px;font-weight:600;font-size:0.88rem;border:none;cursor:pointer;transition:all 0.2s;font-family:inherit}
+.btn-p{background:var(--primary);color:#fff}.btn-p:hover{background:var(--primary-hover)}
+.btn-o{background:transparent;color:var(--text-sec);border:1px solid var(--border)}.btn-o:hover{border-color:var(--primary);color:var(--primary)}
+.btn-s{background:var(--success);color:#fff}.btn-s:hover{background:#16a34a}
+.btn-d{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(239,68,68,0.25)}
+.btn-lg{padding:0.8rem 2rem;font-size:1rem}
+.btn-full{width:100%;justify-content:center}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.wrap{max-width:780px;margin:0 auto;padding:86px 1.5rem 3rem}
+.bread{display:flex;gap:0.4rem;align-items:center;margin-bottom:1.2rem;font-size:0.82rem;color:var(--text-dim)}
+.bread a{color:var(--text-dim)}.bread a:hover{color:var(--primary)}
+.bread .cur{color:var(--text);font-weight:600}
+.qz-header{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;overflow:hidden}
+.qz-header::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(59,130,246,0.08),transparent 70%);pointer-events:none}
+.qz-header-left h1{font-size:1.5rem;font-weight:900;letter-spacing:-0.5px;margin-bottom:0.3rem;display:flex;align-items:center;gap:0.5rem}
+.qz-header-left h1 i{color:var(--primary)}
+.qz-header-left .qz-sub{color:var(--text-sec);font-size:0.88rem}
+.qz-stats{display:flex;gap:1.5rem}
+.qz-stat{text-align:center}
+.qz-stat .qv{font-size:1.5rem;font-weight:900;color:var(--primary)}
+.qz-stat .ql{font-size:0.7rem;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
+.prog-wrap{margin-bottom:1.5rem}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem}
+.prog-top .pt-l{font-size:0.82rem;color:var(--text-sec);font-weight:600}
+.prog-top .pt-r{font-size:0.82rem;color:var(--primary);font-weight:700}
+.prog-bar{width:100%;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));border-radius:4px;transition:width 0.4s ease}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem;margin-bottom:1.5rem}
+.q-num{font-size:0.78rem;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.6rem}
+.q-text{font-size:1.12rem;font-weight:700;line-height:1.6;margin-bottom:1.5rem;white-space:pre-line}
+.q-ar{display:block;color:var(--text-sec);font-size:0.88rem;font-weight:500;direction:rtl;text-align:right;margin-top:0.4rem;white-space:pre-line}
+.opts{display:flex;flex-direction:column;gap:0.6rem}
+.opt-label{display:flex;align-items:center;gap:0.8rem;padding:0.9rem 1.1rem;background:var(--bg-section);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s}
+.opt-label:hover{border-color:var(--primary);background:var(--card-hover)}
+.opt-label.selected{border-color:var(--primary);background:rgba(59,130,246,0.08)}
+.opt-label input[type="radio"]{accent-color:var(--primary);width:18px;height:18px;flex-shrink:0}
+.opt-letter{font-weight:800;color:var(--primary);font-size:0.9rem;min-width:24px}
+.opt-text{font-size:0.95rem;flex:1}
+.opt-ar{display:block;font-size:0.8rem;color:var(--text-dim);direction:rtl;text-align:right;margin-top:0.15rem}
+.opt-label.correct{border-color:var(--success);background:var(--success-bg)}.opt-label.correct .opt-letter{color:var(--success)}
+.opt-label.wrong{border-color:var(--danger);background:var(--danger-bg)}.opt-label.wrong .opt-letter{color:var(--danger)}
+.q-nav{display:flex;justify-content:space-between;align-items:center;gap:0.8rem;flex-wrap:wrap}
+.q-nav-left,.q-nav-right{display:flex;gap:0.6rem}
+.timer-box{display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.9rem;border-radius:8px;background:var(--bg-section);border:1px solid var(--border);font-size:0.88rem;font-weight:700;color:var(--text-sec)}
+.timer-box .t-ic{font-size:1rem}
+.timer-box.warning{color:var(--warning);border-color:rgba(245,158,11,0.3)}
+.timer-box.danger{color:var(--danger);border-color:rgba(239,68,68,0.3);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:3rem;text-align:center;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.result-card.pass::before{background:linear-gradient(90deg,var(--success),#4ade80)}
+.result-card.fail::before{background:linear-gradient(90deg,var(--danger),#f87171)}
+.result-icon{font-size:4rem;margin-bottom:1rem;display:block}
+.result-title{font-size:1.6rem;font-weight:900;margin-bottom:0.3rem}
+.result-score{font-size:3.5rem;font-weight:900;margin:0.8rem 0;letter-spacing:-2px}
+.result-score.pass{color:var(--success)}
+.result-score.fail{color:var(--danger)}
+.result-detail{color:var(--text-sec);font-size:0.95rem;margin-bottom:0.3rem}
+.result-msg{color:var(--text-dim);font-size:0.88rem;margin-bottom:1.5rem;line-height:1.5}
+.result-btns{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap}
+.save-status{margin-top:0.8rem;padding:0.6rem 1rem;border-radius:8px;font-size:0.82rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;animation:fadeIn 0.4s ease}
+.save-status.saved{background:var(--success-bg);color:var(--success);border:1px solid rgba(34,197,94,0.25)}
+.save-status.local-only{background:var(--warning-bg);color:var(--warning);border:1px solid rgba(245,158,11,0.25)}
+.save-status.saving{background:rgba(59,130,246,0.08);color:var(--primary);border:1px solid rgba(59,130,246,0.15)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.review-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.8rem;margin-bottom:1.5rem}
+.review-card h2{font-size:1.08rem;font-weight:700;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.5rem}
+.rev-item{padding:1rem;background:var(--bg-section);border:1px solid var(--border);border-radius:12px;margin-bottom:0.7rem}
+.rev-item:last-child{margin-bottom:0}
+.rev-q{font-size:0.9rem;font-weight:700;margin-bottom:0.5rem;display:flex;align-items:flex-start;gap:0.5rem}
+.rev-q .rq-num{color:var(--primary);font-weight:800;flex-shrink:0}
+.rev-q .rq-icon{flex-shrink:0;font-size:0.85rem}
+.rev-q-ar{display:block;font-size:0.82rem;color:var(--text-dim);font-weight:500;direction:rtl;text-align:right;margin-top:0.2rem;white-space:pre-line}
+.rev-opts{padding-left:1.5rem;display:flex;flex-direction:column;gap:0.25rem}
+.rev-opt{font-size:0.85rem;color:var(--text-sec);display:flex;align-items:center;gap:0.4rem}
+.rev-opt .ro-l{font-weight:700;min-width:20px}
+.rev-opt-ar{display:block;font-size:0.78rem;color:var(--text-dim);direction:rtl;text-align:right;margin-top:0.05rem}
+.rev-opt.ro-correct{color:var(--success);font-weight:600}
+.rev-opt.ro-wrong{color:var(--danger);font-weight:600}
+.loading-state{text-align:center;padding:4rem 1rem;color:var(--text-dim)}
+.loading-state i{font-size:2rem;margin-bottom:1rem;display:block;animation:spin 1.5s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.toast-c{position:fixed;top:78px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:0.4rem}
+.toast{padding:0.7rem 1.1rem;border-radius:9px;font-size:0.85rem;font-weight:500;animation:ti 0.3s;box-shadow:0 8px 24px rgba(0,0,0,0.4);max-width:340px;display:flex;align-items:center;gap:0.5rem}
+.toast.ok{background:rgba(34,197,94,0.15);color:var(--success);border:1px solid rgba(34,197,94,0.3)}
+.toast.err{background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.3)}
+.toast.inf{background:rgba(59,130,246,0.15);color:var(--primary);border:1px solid rgba(59,130,246,0.3)}
+@keyframes ti{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+.topic-badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.7rem;border-radius:20px;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem}
+.topic-badge.forces{background:var(--warning-bg);color:var(--warning);border:1px solid rgba(245,158,11,0.2)}
+.topic-badge.moment{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(239,68,68,0.2)}
+.topic-badge.equilibrium{background:var(--purple-bg);color:var(--purple);border:1px solid rgba(139,92,246,0.2)}
+.topic-badge.friction{background:var(--success-bg);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
+.topic-badge.inclined{background:rgba(59,130,246,0.1);color:var(--primary);border:1px solid rgba(59,130,246,0.2)}
+.topic-badge.projectile{background:rgba(236,72,153,0.1);color:#ec4899;border:1px solid rgba(236,72,153,0.2)}
+.topic-badge.energy{background:rgba(20,184,166,0.1);color:#14b8a6;border:1px solid rgba(20,184,166,0.2)}
+.topic-badge.pulley{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2)}
+.topic-badge.momentum{background:rgba(168,85,247,0.1);color:#a855f7;border:1px solid rgba(168,85,247,0.2)}
+.topic-badge.cog{background:rgba(244,63,94,0.1);color:#f43f5e;border:1px solid rgba(244,63,94,0.2)}
+.ready-topics{display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;margin-top:1rem;margin-bottom:0.5rem}
+@media(max-width:600px){
+  .wrap{padding:78px 1rem 2rem}
+  .qz-header{flex-direction:column;text-align:center}
+  .qz-stats{justify-content:center}
+  .q-text{font-size:1rem}
+  .result-score{font-size:2.5rem}
+  .q-nav{flex-direction:column}
+  .q-nav-left,.q-nav-right{width:100%}
+  .q-nav-left .btn,.q-nav-right .btn{flex:1;justify-content:center}
+  .nav-r a span{display:none}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <span>EquivaPath</span>
+  </a>
+  <div class="nav-r">
+    <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a>
+    <a href="subject.html"><i class="fa-solid fa-book-open"></i> <span>Subjects</span></a>
+    <a href="profile.html"><i class="fa-solid fa-user"></i> <span>Profile</span></a>
+    <button class="btn btn-d" onclick="localStorage.clear();location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i></button>
+  </div>
+</nav>
+<div class="toast-c" id="TC"></div>
+<div class="wrap">
+  <div class="bread">
+    <a href="dashboard.html">Dashboard</a>
+    <i class="fa-solid fa-chevron-right" style="font-size:0.6rem"></i>
+    <a href="subject.html">Subjects</a>
+    <i class="fa-solid fa-chevron-right" style="font-size:0.6rem"></i>
+    <span class="cur" id="breadSub">Mechanics</span>
+  </div>
+  <div id="startScreen" style="display: none;">
+    <div class="qz-header">
+      <div class="qz-header-left">
+        <h1 id="qzTitle"><i class="fa-solid fa-wrench"></i> Mechanics Quiz</h1>
+        <div class="qz-sub" id="qzSub">Forces, Equilibrium, Friction, Inclined Planes, Projectiles & Energy</div>
+      </div>
+      <div class="qz-stats">
+        <div class="qz-stat"><div class="qv" id="statQ">10</div><div class="ql">Questions</div></div>
+        <div class="qz-stat"><div class="qv">MCQ</div><div class="ql">Type</div></div>
+        <div class="qz-stat"><div class="qv">60%</div><div class="ql">Pass</div></div>
+      </div>
+    </div>
+    <div class="q-card" id="startCard">
+      <div id="loadingArea" class="loading-state" style="display: none;">
+        <i class="fa-solid fa-spinner"></i>
+        <p>Loading Quiz Data...</p>
+      </div>
+      <div id="readyArea" style="display: block; text-align: center; padding: 2rem 0px;">
+        <div style="font-size:3.5rem;margin-bottom:1rem;display:block;color:var(--primary)"><i class="fa-solid fa-wrench"></i></div>
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:0.5rem">Ready to Test Your Mechanics Knowledge?</h2>
+        <p style="color:var(--text-sec);font-size:0.92rem;margin-bottom:0.8rem;line-height:1.6;max-width:520px;margin-left:auto;margin-right:auto">
+          10 multiple-choice questions covering statics, dynamics, friction, projectiles, work and energy. You need at least 60% to pass. Your best score will be saved to your dashboard.
+        </p>
+        <div class="ready-topics">
+          <span class="topic-badge forces"><i class="fa-solid fa-arrows-up-down-left-right"></i> Forces</span>
+          <span class="topic-badge moment"><i class="fa-solid fa-rotate"></i> Moment</span>
+          <span class="topic-badge equilibrium"><i class="fa-solid fa-scale-balanced"></i> Equilibrium</span>
+          <span class="topic-badge friction"><i class="fa-solid fa-hand"></i> Friction</span>
+          <span class="topic-badge inclined"><i class="fa-solid fa-arrow-trend-up"></i> Inclined Plane</span>
+          <span class="topic-badge projectile"><i class="fa-solid fa-jet-fighter-up"></i> Projectile</span>
+          <span class="topic-badge energy"><i class="fa-solid fa-bolt"></i> Energy</span>
+          <span class="topic-badge pulley"><i class="fa-solid fa-gears"></i> Pulley</span>
+          <span class="topic-badge momentum"><i class="fa-solid fa-rocket"></i> Momentum</span>
+          <span class="topic-badge cog"><i class="fa-solid fa-bullseye"></i> C.O.G.</span>
+        </div>
+        <div style="display:flex;gap:1rem;justify-content:center;align-items:center;flex-wrap:wrap;margin:1.5rem 0">
+          <div class="timer-box"><span class="t-ic"><i class="fa-regular fa-clock"></i></span> <span id="timerDisplay">05:00</span></div>
+        </div>
+        <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-p btn-lg" onclick="startQuiz()"><i class="fa-solid fa-play"></i> Start Quiz</button>
+          <a href="subject.html" class="btn btn-o btn-lg">Back to Subjects</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="quizScreen" style="display: none;">
+    <div class="prog-wrap">
+      <div class="prog-top">
+        <span class="pt-l" id="progLabel">Question 1 of 10</span>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <span class="pt-r" id="progPct">0%</span>
+          <div class="timer-box" id="timerBox"><span class="t-ic"><i class="fa-regular fa-clock"></i></span> <span id="timerLive">05:00</span></div>
+        </div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width: 0%;"></div></div>
+    </div>
+    <div id="questionArea"></div>
+    <div class="q-nav">
+      <div class="q-nav-left"><button class="btn btn-o" id="prevBtn" onclick="prevQ()"><i class="fa-solid fa-arrow-left"></i> Previous</button></div>
+      <div class="q-nav-right">
+        <button class="btn btn-o" onclick="skipQ()">Skip <i class="fa-solid fa-forward"></i></button>
+        <button class="btn btn-p" id="nextBtn" onclick="nextQ()" style="display: inline-flex;">Next <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn btn-s" id="submitBtn" onclick="submitQuiz()" style="display:none"><i class="fa-solid fa-check-double"></i> Submit Quiz</button>
+      </div>
+    </div>
+  </div>
+  <div id="resultScreen" style="display:none"></div>
+</div>
+
+<script>
+var subId = new URLSearchParams(window.location.search).get('id') || '';
+var subjectName = 'Mechanics';
+var questions = [];
+var currentQ = 0;
+var answers = [];
+var timerInterval = null;
+var timeLeft = 300;
+
+var subIcons = {
+  'Mathematics':'fa-square-root-variable','Physics':'fa-atom','Mechanics':'fa-wrench',
+  'Engineering Drawing':'fa-ruler-combined','Chemistry':'fa-flask','English':'fa-pen-fancy',
+  'Arabic':'fa-feather-pointed','Calculus':'fa-chart-area','Programming':'fa-laptop-code',
+  'Data Structures':'fa-sitemap','Discrete Mathematics':'fa-hashtag','Logic Design':'fa-microchip',
+  'Databases':'fa-database','Algebra & Descriptive Geometry':'fa-shapes'
+};
+
+/* ===== أسئلة الميكانيكا - تالتة ثانوي ===== */
+var fallbackQuestions = [
+  {
+    q: "Find the magnitude of the resultant of two forces 3 N and 4 N acting at a right angle to each other.",
+    ar: "أوجد مقدار محصلة قوتين 3 نيوتن و 4 نيوتن تعملان بزاوية قائمة على بعضهما.",
+    opts: [
+      { en: "1 N", ar: "1 نيوتن" },
+      { en: "5 N", ar: "5 نيوتن" },
+      { en: "7 N", ar: "7 نيوتن" },
+      { en: "\u221A7 N", ar: "\u221A7 نيوتن" }
+    ],
+    ans: 1,
+    tag: "forces"
+  },
+  {
+    q: "A force of 10 N acts perpendicular to a lever at a distance of 2 m from the pivot. The moment of the force about the pivot equals:",
+    ar: "قوة مقدارها 10 نيوتن تعمل عمودياً على رافعة على بعد 2 متر من محور الدوران. عزم القوة حول المحور يساوي:",
+    opts: [
+      { en: "5 N\u00B7m", ar: "5 نيوتن\u00B7متر" },
+      { en: "12 N\u00B7m", ar: "12 نيوتن\u00B7متر" },
+      { en: "20 N\u00B7m", ar: "20 نيوتن\u00B7متر" },
+      { en: "200 N\u00B7m", ar: "200 نيوتن\u00B7متر" }
+    ],
+    ans: 2,
+    tag: "moment"
+  },
+  {
+    q: "A body is in equilibrium under the action of three coplanar forces. If two forces are 5 N and 12 N at right angles, the magnitude of the third force is:",
+    ar: "جسم في حالة اتزان تحت تأثير ثلاث قوى مستوية. إذا كانت قوتان منهما 5 نيوتن و 12 نيوتن بزاوية قائمة بينهما، فإن مقدار القوة الثالثة يساوي:",
+    opts: [
+      { en: "7 N", ar: "7 نيوتن" },
+      { en: "8.5 N", ar: "8.5 نيوتن" },
+      { en: "13 N", ar: "13 نيوتن" },
+      { en: "17 N", ar: "17 نيوتن" }
+    ],
+    ans: 2,
+    tag: "equilibrium"
+  },
+  {
+    q: "A block of mass 5 kg rests on a horizontal surface where \u03BC = 0.4. A horizontal force of 15 N is applied. The friction force equals: (g = 10 m/s\u00B2)",
+    ar: "مكعب كتلته 5 كجم موضوع على سطح أفقي حيث معامل الاحتكاك \u03BC = 0.4. أُطبقت قوة أفقية مقدارها 15 نيوتن. قوة الاحتكاك تساوي: (g = 10 م/ث\u00B2)",
+    opts: [
+      { en: "10 N", ar: "10 نيوتن" },
+      { en: "15 N", ar: "15 نيوتن" },
+      { en: "20 N", ar: "20 نيوتن" },
+      { en: "50 N", ar: "50 نيوتن" }
+    ],
+    ans: 1,
+    tag: "friction"
+  },
+  {
+    q: "A body of mass 4 kg is placed on a smooth inclined plane at angle 30\u00B0. The acceleration of the body down the plane is: (g = 10 m/s\u00B2)",
+    ar: "جسم كتلته 4 كجم موضوع على مستوى مائل أملس بزاوية 30\u00B0. تسارع الجسم أسفل المستوى يساوي: (g = 10 م/ث\u00B2)",
+    opts: [
+      { en: "2 m/s\u00B2", ar: "2 م/ث\u00B2" },
+      { en: "4 m/s\u00B2", ar: "4 م/ث\u00B2" },
+      { en: "5 m/s\u00B2", ar: "5 م/ث\u00B2" },
+      { en: "8.66 m/s\u00B2", ar: "8.66 م/ث\u00B2" }
+    ],
+    ans: 2,
+    tag: "inclined"
+  },
+  {
+    q: "A projectile is fired with initial velocity 20 m/s at an angle of 30\u00B0 to the horizontal. The maximum height reached is: (g = 10 m/s\u00B2)",
+    ar: "قذيفة أُطلقت بسرعة ابتدائية 20 م/ث بزاوية 30\u00B0 مع الأفقي. أقصى ارتفاع تصل إليه يساوي: (g = 10 م/ث\u00B2)",
+    opts: [
+      { en: "2.5 m", ar: "2.5 متر" },
+      { en: "5 m", ar: "5 متر" },
+      { en: "10 m", ar: "10 متر" },
+      { en: "20 m", ar: "20 متر" }
+    ],
+    ans: 1,
+    tag: "projectile"
+  },
+  {
+    q: "A body of mass 2 kg moves from rest under a horizontal force of 10 N through a distance of 4 m (neglecting friction). Its final velocity is: (g = 10 m/s\u00B2)",
+    ar: "جسم كتلته 2 كجم يتحرك من السكون تحت تأثير قوة أفقية 10 نيوتن مسافة 4 متر (مع إهمال الاحتكاك). سرعته النهائية تساوي: (g = 10 م/ث\u00B2)",
+    opts: [
+      { en: "2\u221A5 m/s", ar: "2\u221A5 م/ث" },
+      { en: "2\u221A10 m/s", ar: "2\u221A10 م/ث" },
+      { en: "4 m/s", ar: "4 م/ث" },
+      { en: "20 m/s", ar: "20 م/ث" }
+    ],
+    ans: 1,
+    tag: "energy"
+  },
+  {
+    q: "Two masses 3 kg and 7 kg are connected by a light inextensible string passing over a smooth pulley. The acceleration of the system is: (g = 10 m/s\u00B2)",
+    ar: "كتلتان 3 كجم و 7 كجم مربوطتان بخيط خفيف غير قابل للتمدد يمر فوق بكرة ملساء. تسارع النظام يساوي: (g = 10 م/ث\u00B2)",
+    opts: [
+      { en: "2 m/s\u00B2", ar: "2 م/ث\u00B2" },
+      { en: "3 m/s\u00B2", ar: "3 م/ث\u00B2" },
+      { en: "4 m/s\u00B2", ar: "4 م/ث\u00B2" },
+      { en: "5 m/s\u00B2", ar: "5 م/ث\u00B2" }
+    ],
+    ans: 2,
+    tag: "pulley"
+  },
+  {
+    q: "A force of 50 N acts on a body of mass 10 kg for 0.4 seconds. The change in the body's velocity is:",
+    ar: "قوة مقدارها 50 نيوتن تؤثر على جسم كتلته 10 كجم لمدة 0.4 ثانية. التغير في سرعة الجسم يساوي:",
+    opts: [
+      { en: "1 m/s", ar: "1 م/ث" },
+      { en: "2 m/s", ar: "2 م/ث" },
+      { en: "4 m/s", ar: "4 م/ث" },
+      { en: "20 m/s", ar: "20 م/ث" }
+    ],
+    ans: 1,
+    tag: "momentum"
+  },
+  {
+    q: "The center of gravity of a uniform triangular lamina is located at:",
+    ar: "مركز ثقل لوح مثلث منتظم يقع عند:",
+    opts: [
+      { en: "The intersection of its angle bisectors", ar: "تقاطع منصفات زواياه" },
+      { en: "The intersection of its perpendicular bisectors", ar: "تقاطع المنصفات العمودية لأضلاعه" },
+      { en: "The intersection of its medians", ar: "تقاطع متوسطاته" },
+      { en: "The intersection of its altitudes", ar: "تقاطع ارتفاعاته" }
+    ],
+    ans: 2,
+    tag: "cog"
+  }
+];
+
+var tagLabels = {
+  forces:      { text: 'Forces',           cls: 'forces',      icon: 'fa-arrows-up-down-left-right' },
+  moment:      { text: 'Moment',           cls: 'moment',      icon: 'fa-rotate' },
+  equilibrium: { text: 'Equilibrium',      cls: 'equilibrium', icon: 'fa-scale-balanced' },
+  friction:    { text: 'Friction',         cls: 'friction',    icon: 'fa-hand' },
+  inclined:    { text: 'Inclined Plane',   cls: 'inclined',    icon: 'fa-arrow-trend-up' },
+  projectile:  { text: 'Projectile',       cls: 'projectile',  icon: 'fa-jet-fighter-up' },
+  energy:      { text: 'Energy',           cls: 'energy',      icon: 'fa-bolt' },
+  pulley:      { text: 'Pulley System',    cls: 'pulley',      icon: 'fa-gears' },
+  momentum:    { text: 'Momentum',         cls: 'momentum',    icon: 'fa-rocket' },
+  cog:         { text: 'Center of Gravity', cls: 'cog',        icon: 'fa-bullseye' },
+  projections: { text: 'General',          cls: 'forces',      icon: 'fa-circle-question' }
+};
+
+function getSubjectKey(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+function getIcon(name) {
+  return 'fa-solid ' + (subIcons[name] || 'fa-book-open');
+}
+function formatTime(s) {
+  var m = Math.floor(s / 60);
+  var sec = s % 60;
+  return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+function toast(m, t) {
+  var c = document.getElementById('TC');
+  var d = document.createElement('div');
+  var icon = t === 'ok' ? 'fa-circle-check' : (t === 'err' ? 'fa-circle-xmark' : 'fa-circle-info');
+  d.className = 'toast ' + (t || 'inf');
+  d.innerHTML = '<i class="fa-solid ' + icon + '"></i> ' + m;
+  c.appendChild(d);
+  setTimeout(function() { d.remove(); }, 3500);
+}
+function normalizeOpts(opts) {
+  return opts.map(function(o) {
+    if (typeof o === 'object' && o.en) return o;
+    var txt = (typeof o === 'object') ? (o.text || o.label || '') : String(o);
+    return { en: txt, ar: txt };
+  });
+}
+function normalizeQuestion(q) {
+  var qText = q.question || q.text || q.q || '';
+  var qEn, qAr;
+  if (typeof qText === 'object' && qText.en) {
+    qEn = qText.en; qAr = qText.ar || '';
+  } else {
+    qEn = String(qText); qAr = q.ar || '';
+  }
+  return {
+    q: qEn, ar: qAr,
+    opts: normalizeOpts(q.options || q.choices || q.opts || []),
+    ans: q.correct_answer !== undefined ? q.correct_answer : (q.correctIndex !== undefined ? q.correctIndex : q.ans),
+    tag: q.tag || 'projections'
+  };
+}
+function saveScoreToLocal(scoreData) {
+  var key = 'equivapath_quiz_results';
+  var existing = [];
+  try { existing = JSON.parse(localStorage.getItem(key)) || []; } catch(e) { existing = []; }
+  var found = false;
+  for (var i = 0; i < existing.length; i++) {
+    if (existing[i].subject_key === scoreData.subject_key) {
+      if (scoreData.score > existing[i].score) existing[i] = scoreData;
+      found = true; break;
+    }
+  }
+  if (!found) existing.push(scoreData);
+  localStorage.setItem(key, JSON.stringify(existing));
+  return true;
+}
+function saveScoreToServer(scoreData) {
+  var tk = localStorage.getItem('equivapath_token') || '';
+  if (!tk) return Promise.resolve({ local: true });
+  return fetch('http://localhost:3000/api/result', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tk },
+    body: JSON.stringify({
+      subject_id: subId || scoreData.subject_key,
+      subject_name: subjectName,
+      score: scoreData.score, correct: scoreData.correct, total: scoreData.total
+    })
+  })
+  .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(function(d) { return { server: true, data: d }; })
+  .catch(function(err) { return { server: false, error: err.message }; });
+}
+function saveScoreAndShowStatus(pct, correct, total) {
+  var scoreData = {
+    subject_key: getSubjectKey(subjectName), subject_name: subjectName,
+    subject_id: subId || null, score: pct, correct: correct, total: total,
+    passed: pct >= 60, date: new Date().toISOString(), time_used: 300 - timeLeft
+  };
+  saveScoreToLocal(scoreData);
+  var statusEl = document.getElementById('saveStatus');
+  saveScoreToServer(scoreData).then(function(result) {
+    if (result.server && result.data) {
+      if (statusEl) { statusEl.className = 'save-status saved'; statusEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> Score saved to dashboard successfully'; }
+      toast('Score saved to dashboard!', 'ok');
+    } else if (result.local) {
+      if (statusEl) { statusEl.className = 'save-status local-only'; statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Saved locally (login required for cloud sync)'; }
+      toast('Score saved locally', 'inf');
+    } else {
+      if (statusEl) { statusEl.className = 'save-status local-only'; statusEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Saved locally (server unreachable)'; }
+      toast('Saved locally, server sync pending', 'inf');
+    }
+  });
+}
+function startTimer() {
+  timerInterval = setInterval(function() {
+    timeLeft--;
+    var el = document.getElementById('timerLive');
+    var box = document.getElementById('timerBox');
+    if (el) el.textContent = formatTime(timeLeft);
+    box.className = 'timer-box';
+    if (timeLeft <= 30) box.classList.add('danger');
+    else if (timeLeft <= 60) box.classList.add('warning');
+    if (timeLeft <= 0) { clearInterval(timerInterval); toast('Time is up!', 'err'); submitQuiz(); }
+  }, 1000);
+}
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+function showReady() {
+  document.getElementById('loadingArea').style.display = 'none';
+  document.getElementById('readyArea').style.display = 'block';
+  document.getElementById('timerDisplay').textContent = formatTime(timeLeft);
+}
+function renderQ() {
+  if (currentQ >= questions.length) return;
+  var q = questions[currentQ];
+  var letters = ['A', 'B', 'C', 'D'];
+  var total = questions.length;
+  var pct = Math.round((currentQ / total) * 100);
+  document.getElementById('progLabel').textContent = 'Question ' + (currentQ + 1) + ' of ' + total;
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progFill').style.width = pct + '%';
+  var tagInfo = tagLabels[q.tag] || tagLabels.forces;
+  var tagHtml = '<span class="topic-badge ' + tagInfo.cls + '"><i class="fa-solid ' + tagInfo.icon + '"></i> ' + tagInfo.text + '</span>';
+  var arLine = q.ar ? '<span class="q-ar">' + q.ar + '</span>' : '';
+  var optsH = '';
+  for (var i = 0; i < q.opts.length; i++) {
+    var o = q.opts[i];
+    var enText = (typeof o === 'object' && o.en) ? o.en : String(o);
+    var arText = (typeof o === 'object' && o.ar) ? o.ar : '';
+    var sel = answers[currentQ] === i ? ' selected' : '';
+    var chk = answers[currentQ] === i ? ' checked' : '';
+    var arLine2 = arText ? '<span class="opt-ar">' + arText + '</span>' : '';
+    optsH += '<label class="opt-label' + sel + '" onclick="selectOpt(' + i + ')"><input type="radio" name="q' + currentQ + '" value="' + i + '"' + chk + '><span class="opt-letter">' + letters[i] + ')</span><span class="opt-text">' + enText + arLine2 + '</span></label>';
+  }
+  document.getElementById('questionArea').innerHTML =
+    '<div class="q-card">' +
+      '<div class="q-num">Question ' + (currentQ + 1) + ' of ' + total + '</div>' +
+      tagHtml +
+      '<div class="q-text" style="margin-top:0.8rem">' + q.q + arLine + '</div>' +
+      '<div class="opts">' + optsH + '</div>' +
+    '</div>';
+  document.getElementById('prevBtn').disabled = currentQ === 0;
+  if (currentQ === total - 1) {
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('submitBtn').style.display = 'inline-flex';
+  } else {
+    document.getElementById('nextBtn').style.display = 'inline-flex';
+    document.getElementById('submitBtn').style.display = 'none';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function selectOpt(i) {
+  answers[currentQ] = i;
+  var labels = document.querySelectorAll('#questionArea .opt-label');
+  for (var j = 0; j < labels.length; j++) labels[j].classList.remove('selected');
+  if (labels[i]) labels[i].classList.add('selected');
+  var radios = document.querySelectorAll('input[name="q' + currentQ + '"]');
+  if (radios[i]) radios[i].checked = true;
+}
+function nextQ() {
+  if (answers[currentQ] === null) { toast('Please select an answer', 'err'); return; }
+  currentQ++; renderQ();
+}
+function prevQ() { currentQ--; renderQ(); }
+function skipQ() {
+  if (currentQ < questions.length - 1) { currentQ++; renderQ(); }
+  else { toast('This is the last question', 'inf'); }
+}
+function startQuiz() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('timerLive').textContent = formatTime(timeLeft);
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  renderQ(); startTimer();
+}
+function submitQuiz() {
+  stopTimer();
+  var unanswered = 0;
+  for (var u = 0; u < answers.length; u++) { if (answers[u] === null) unanswered++; }
+  if (unanswered > 0 && !confirm('You have ' + unanswered + ' unanswered question(s). Submit anyway?')) return;
+  var correct = 0;
+  for (var c = 0; c < questions.length; c++) { if (answers[c] === questions[c].ans) correct++; }
+  var total = questions.length;
+  var pct = Math.round((correct / total) * 100);
+  var passed = pct >= 60;
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  var letters = ['A', 'B', 'C', 'D'];
+  var revH = '';
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    var userAns = answers[i];
+    var isCorrect = userAns === q.ans;
+    var iconHtml = isCorrect
+      ? '<i class="fa-solid fa-circle-check" style="color:var(--success)"></i>'
+      : '<i class="fa-solid fa-circle-xmark" style="color:var(--danger)"></i>';
+    var tagInfo = tagLabels[q.tag] || tagLabels.forces;
+    var tagHtml = '<span class="topic-badge ' + tagInfo.cls + '" style="font-size:0.65rem;padding:0.15rem 0.5rem"><i class="fa-solid ' + tagInfo.icon + '"></i> ' + tagInfo.text + '</span>';
+    var qArLine = q.ar ? '<span class="rev-q-ar">' + q.ar + '</span>' : '';
+    var optsH = '';
+    for (var j = 0; j < q.opts.length; j++) {
+      var o = q.opts[j];
+      var enText = (typeof o === 'object' && o.en) ? o.en : String(o);
+      var arText = (typeof o === 'object' && o.ar) ? o.ar : '';
+      var cls = 'rev-opt';
+      var extra = '';
+      if (j === q.ans) { cls += ' ro-correct'; extra = ' <i class="fa-solid fa-check"></i>'; }
+      if (j === userAns && j !== q.ans) { cls += ' ro-wrong'; extra = ' <i class="fa-solid fa-xmark"></i>'; }
+      var arLine3 = arText ? '<span class="rev-opt-ar">' + arText + '</span>' : '';
+      optsH += '<div class="' + cls + '"><span class="ro-l">' + letters[j] + ')</span><span>' + enText + extra + arLine3 + '</span></div>';
+    }
+    revH += '<div class="rev-item"><div class="rev-q" style="gap:0.6rem;align-items:center"><span class="rq-num">' + (i + 1) + '.</span><span style="flex:1">' + q.q + qArLine + '</span>' + tagHtml + '<span class="rq-icon">' + iconHtml + '</span></div><div class="rev-opts">' + optsH + '</div></div>';
+  }
+  var timeUsed = formatTime(300 - timeLeft);
+  document.getElementById('resultScreen').innerHTML =
+    '<div class="result-card ' + (passed ? 'pass' : 'fail') + '">' +
+      '<span class="result-icon">' + (passed ? '<i class="fa-solid fa-trophy" style="color:var(--success)"></i>' : '<i class="fa-solid fa-face-frown" style="color:var(--danger)"></i>') + '</span>' +
+      '<div class="result-title">' + (passed ? 'Congratulations!' : 'Not Quite There') + '</div>' +
+      '<div class="result-score ' + (passed ? 'pass' : 'fail') + '">' + pct + '%</div>' +
+      '<div class="result-detail">You got <strong>' + correct + '</strong> out of <strong>' + total + '</strong> correct</div>' +
+      '<div class="result-detail">Time: ' + timeUsed + ' &bull; Pass score: 60%</div>' +
+      '<div class="result-msg">' + (passed ? 'Great job! Your score is being saved...' : 'You need 60% to pass. Review your mistakes below.') + '</div>' +
+      '<div class="result-btns">' +
+        '<a href="dashboard.html" class="btn btn-p btn-lg"><i class="fa-solid fa-gauge-high"></i> Go to Dashboard</a>' +
+        '<button class="btn btn-o btn-lg" onclick="retryQuiz()"><i class="fa-solid fa-rotate-right"></i> Retry Quiz</button>' +
+      '</div>' +
+      '<div id="saveStatus" class="save-status saving"><i class="fa-solid fa-spinner fa-spin"></i> Saving your score...</div>' +
+    '</div>' +
+    '<div class="review-card"><h2><i class="fa-solid fa-list-check" style="color:var(--primary)"></i> Answer Review</h2>' + revH + '</div>';
+  saveScoreAndShowStatus(pct, correct, total);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function retryQuiz() {
+  currentQ = 0;
+  answers = new Array(questions.length).fill(null);
+  timeLeft = 300;
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('timerLive').textContent = formatTime(timeLeft);
+  document.getElementById('timerBox').className = 'timer-box';
+  renderQ(); startTimer();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  questions = fallbackQuestions;
+  subjectName = 'Mechanics';
+  document.getElementById('statQ').textContent = questions.length;
+  document.getElementById('qzTitle').innerHTML = '<i class="' + getIcon(subjectName) + '"></i> ' + subjectName + ' Quiz';
+  document.getElementById('qzSub').textContent = 'Forces, Equilibrium, Friction, Inclined Planes, Projectiles & Energy';
+  document.getElementById('breadSub').textContent = subjectName;
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+  showReady();
+
+  var tk = localStorage.getItem('equivapath_token') || '';
+  if (subId && tk) {
+    fetch('http://localhost:3000/api/subject/' + subId, {
+      headers: { 'Authorization': 'Bearer ' + tk }
+    })
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d) {
+      if (d.subject) {
+        subjectName = d.subject.name;
+        document.getElementById('qzTitle').innerHTML = '<i class="' + getIcon(subjectName) + '"></i> ' + subjectName + ' Quiz';
+        document.getElementById('breadSub').textContent = subjectName;
+        if (d.subject.description) document.getElementById('qzSub').textContent = d.subject.description;
+      }
+    })
+    .catch(function() {});
+
+    fetch('http://localhost:3000/api/quiz/' + subId, {
+      headers: { 'Authorization': 'Bearer ' + tk }
+    })
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(data) {
+      if (Array.isArray(data) && data.length > 0) {
+        questions = data.map(normalizeQuestion);
+        document.getElementById('statQ').textContent = questions.length;
+        toast('Quiz loaded from server (' + questions.length + ' questions)', 'ok');
+      }
+    })
+    .catch(function() {});
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EquivaPath - Educational Equivalency Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+  :root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --bg-main: #020617;
+    --bg-section: #0f172a;
+    --card: #111827;
+    --border: #1f2933;
+    --text: #ffffff;
+    --text-secondary: #9ca3af;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --purple: #8b5cf6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-main);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--primary-hover); }
+
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 70px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+  .nav-logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem;
+  }
+  .nav-logo span {
+    font-size: 1.5rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+  .nav-links a {
+    color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;
+    transition: color 0.2s; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 600;
+    font-size: 0.95rem; border: none; cursor: pointer;
+    transition: all 0.25s ease; font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--primary); color: #fff;
+    box-shadow: 0 0 20px rgba(59,130,246,0.3);
+  }
+  .btn-primary:hover {
+    background: var(--primary-hover); color: #fff;
+    box-shadow: 0 0 30px rgba(59,130,246,0.5);
+    transform: translateY(-1px);
+  }
+  .btn-lg { padding: 0.85rem 2rem; font-size: 1.1rem; border-radius: 10px; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  .btn-subscribe {
+    background: transparent;
+    color: var(--warning);
+    border: 2px solid var(--warning);
+    box-shadow: 0 0 20px rgba(245,158,11,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-subscribe::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245,158,11,0.15), transparent);
+    transition: left 0.5s ease;
+  }
+  .btn-subscribe:hover {
+    background: rgba(245,158,11,0.1);
+    border-color: #fbbf24;
+    color: #fbbf24;
+    box-shadow: 0 0 35px rgba(245,158,11,0.3);
+    transform: translateY(-1px);
+  }
+  .btn-subscribe:hover::before { left: 100%; }
+  .btn-subscribe i { font-size: 1rem; }
+  .btn-subscribe .sub-badge {
+    background: var(--warning);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 0.25rem;
+  }
+
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 120px 2rem 4rem;
+    max-width: 1200px; margin: 0 auto; gap: 4rem;
+  }
+  .hero-content { flex: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
+    color: var(--primary); margin-bottom: 1.5rem; font-weight: 600;
+  }
+  .hero-title {
+    font-size: 3.5rem; font-weight: 900; line-height: 1.1;
+    letter-spacing: -1.5px; margin-bottom: 1.5rem;
+  }
+  .hero-title span {
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-desc {
+    font-size: 1.15rem; color: var(--text-secondary);
+    max-width: 520px; margin-bottom: 2.5rem; line-height: 1.8;
+  }
+  .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; }
+
+  .video-placeholder {
+    width: 100%; max-width: 480px; aspect-ratio: 16/9;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1rem;
+    position: relative; overflow: hidden;
+  }
+  .video-placeholder::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, transparent 70%);
+    z-index: 2;
+  }
+  .video-placeholder video {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 16px; z-index: 1;
+  }
+  .play-icon {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: var(--primary); display: flex; align-items: center;
+    justify-content: center; z-index: 3;
+    box-shadow: 0 0 40px rgba(59,130,246,0.4);
+    transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
+  }
+  .play-icon:hover { transform: scale(1.1); box-shadow: 0 0 60px rgba(59,130,246,0.6); }
+  .play-icon i { font-size: 1.5rem; color: #fff; margin-left: 4px; }
+  .video-placeholder span { color: var(--text-secondary); font-size: 0.9rem; z-index: 3; font-weight: 500; }
+
+  .steps-section {
+    padding: 6rem 2rem; background: var(--bg-section);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-header h2 { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.75rem; }
+  .section-header p { color: var(--text-secondary); font-size: 1.1rem; max-width: 500px; margin: 0 auto; }
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem; max-width: 1100px; margin: 0 auto;
+  }
+  .step-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem; text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .step-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+  .step-number {
+    width: 50px; height: 50px; border-radius: 12px;
+    background: rgba(59,130,246,0.15); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin: 0 auto 1.25rem;
+  }
+  .step-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+  .contact-section { padding: 6rem 2rem; max-width: 700px; margin: 0 auto; }
+  .contact-form {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2.5rem;
+  }
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin-bottom: 0.5rem; font-weight: 600;
+    font-size: 0.9rem; color: var(--text-secondary);
+  }
+  .form-group label i { color: var(--primary); font-size: 0.85rem; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 0.75rem 1rem; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg-main);
+    color: var(--text); font-size: 0.95rem; font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    outline: none; border-color: var(--primary);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-msg {
+    padding: 0.75rem 1rem; border-radius: 8px; margin-top: 1rem;
+    font-size: 0.9rem; display: none;
+  }
+  .form-msg.success { display: block; background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+  .form-msg.error { display: block; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+  .new-footer {
+    background: var(--bg-section);
+    border-top: 1px solid var(--border);
+    padding: 4rem 2rem 2rem;
+    color: var(--text-secondary);
+  }
+  .footer-container {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; gap: 2.5rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) {
+    .footer-container { grid-template-columns: 2fr 1fr 1fr 1fr; }
+  }
+  .footer-brand-logo { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .footer-logo-icon {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.2rem;
+  }
+  .footer-brand-logo span { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+  .footer-col p { font-size: 0.95rem; line-height: 1.7; }
+  .footer-col h4 { color: var(--text); font-size: 1rem; margin-bottom: 1.25rem; font-weight: 600; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 0.65rem; }
+  .footer-col ul a {
+    color: var(--text-secondary); font-size: 0.9rem; transition: color 0.2s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .footer-col ul a:hover { color: var(--text); }
+  .footer-col ul a i { font-size: 0.65rem; opacity: 0.7; }
+  .social-links { display: flex; gap: 0.75rem; }
+  .social-link {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); transition: all 0.25s; font-size: 1.1rem;
+  }
+  .social-link:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem; padding-top: 2rem;
+    text-align: center; font-size: 0.85rem;
+  }
+
+  .toast-container {
+    position: fixed; top: 85px; right: 20px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 0.5rem;
+  }
+  .toast {
+    padding: 0.85rem 1.25rem; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 500;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .toast.success { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+  .toast.error { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+  .toast.warning { background: rgba(245,158,11,0.15); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+  @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  .whatsapp-float {
+    position: fixed; bottom: 25px; right: 25px;
+    width: 60px; height: 60px; background-color: #25D366;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    z-index: 998; transition: all 0.3s ease;
+    animation: whatsapp-pulse 2s infinite;
+  }
+  .whatsapp-float:hover {
+    background-color: #128C7E; transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6); color: #fff;
+  }
+  .whatsapp-float i { color: #fff; font-size: 2rem; line-height: 1; }
+  @keyframes whatsapp-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+    70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+  }
+
+  .sub-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(2,6,23,0.88); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem; opacity: 0; visibility: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .sub-overlay.open { opacity: 1; visibility: visible; }
+  .sub-modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 22px; width: 100%; max-width: 600px;
+    max-height: 90vh; overflow: hidden;
+    display: flex; flex-direction: column;
+    transform: translateY(30px) scale(0.96);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 80px rgba(245,158,11,0.08);
+    position: relative;
+  }
+  .sub-overlay.open .sub-modal { transform: translateY(0) scale(1); }
+
+  .sub-modal-header {
+    padding: 2rem 2rem 1.5rem;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .sub-modal-header::after {
+    content: ''; position: absolute; bottom: -1px; left: 2rem; right: 2rem; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--warning), var(--primary), transparent);
+    opacity: 0.5;
+  }
+  .sub-modal-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--text-secondary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; transition: all 0.2s;
+  }
+  .sub-modal-close:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+  .sub-modal-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+    border: 1px solid rgba(245,158,11,0.2);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem; font-size: 1.4rem; color: var(--warning);
+  }
+  .sub-modal-header h2 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 0.3rem; }
+  .sub-modal-header p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; }
+
+  .sub-modal-body {
+    padding: 1.5rem 2rem; overflow-y: auto; flex: 1;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .sub-modal-body::-webkit-scrollbar { width: 5px; }
+  .sub-modal-body::-webkit-scrollbar-track { background: transparent; }
+  .sub-modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sub-status {
+    padding: 1.25rem 1.5rem; border-radius: 14px;
+    margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;
+    animation: fadeUp 0.3s ease;
+  }
+  .sub-status.inactive {
+    background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.02));
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+  .sub-status.active {
+    background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,197,94,0.02));
+    border: 1px solid rgba(34,197,94,0.2);
+  }
+  .sub-status.pending {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.02));
+    border: 1px solid rgba(245,158,11,0.2);
+  }
+  .sub-status-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .sub-status.inactive .sub-status-icon { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .sub-status.active .sub-status-icon { background: rgba(34,197,94,0.15); color: var(--success); }
+  .sub-status.pending .sub-status-icon { background: rgba(245,158,11,0.15); color: var(--warning); }
+  .sub-status-text h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.15rem; }
+  .sub-status.inactive .sub-status-text h4 { color: var(--danger); }
+  .sub-status.active .sub-status-text h4 { color: var(--success); }
+  .sub-status.pending .sub-status-text h4 { color: var(--warning); }
+  .sub-status-text p { font-size: 0.82rem; color: var(--text-secondary); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .sub-code-section {
+    background: var(--bg-section); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;
+    animation: fadeUp 0.35s ease 0.05s both;
+  }
+  .sub-code-section h4 {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.92rem; font-weight: 700; margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .sub-code-section h4 i { color: var(--primary); font-size: 0.85rem; }
+  .sub-code-input-wrap {
+    display: flex; gap: 0.5rem;
+  }
+  .sub-code-input {
+    flex: 1; padding: 0.85rem 1.1rem; border-radius: 10px;
+    border: 2px solid var(--border); background: var(--bg-main);
+    color: var(--text); font-size: 1.1rem; font-family: 'Courier New', monospace;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    transition: all 0.3s; text-align: center;
+  }
+  .sub-code-input::placeholder {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.9rem; font-weight: 500; letter-spacing: normal;
+    text-transform: none; color: var(--text-secondary);
+  }
+  .sub-code-input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+  }
+  .sub-code-input.error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+  .sub-code-input.success { border-color: var(--success); box-shadow: 0 0 0 3px rgba(34,197,94,0.15); }
+  .sub-code-error {
+    font-size: 0.78rem; color: var(--danger); margin-top: 0.5rem;
+    display: none; align-items: center; gap: 0.35rem;
+  }
+  .sub-code-error.show { display: flex; }
+  .btn-activate {
+    padding: 0.85rem 1.5rem; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, var(--warning), #d97706);
+    color: #000; font-weight: 700; font-size: 0.9rem;
+    cursor: pointer; font-family: inherit; transition: all 0.25s;
+    display: flex; align-items: center; gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .btn-activate:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(245,158,11,0.4); }
+  .btn-activate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .sub-benefits {
+    background: var(--bg-section); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    animation: fadeUp 0.4s ease 0.1s both;
+  }
+  .sub-benefits h4 {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.92rem; font-weight: 700; margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .sub-benefits h4 i { color: var(--success); font-size: 0.85rem; }
+  .sub-benefits-list { list-style: none; }
+  .sub-benefits-list li {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    padding: 0.55rem 0; font-size: 0.88rem; color: var(--text-secondary);
+    border-bottom: 1px solid rgba(31,41,51,0.5); line-height: 1.5;
+  }
+  .sub-benefits-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .sub-benefits-list li:first-child { padding-top: 0; }
+  .sub-benefits-list li i {
+    margin-top: 0.2rem; font-size: 0.65rem; color: var(--success); flex-shrink: 0;
+  }
+
+  .sub-modal-footer {
+    padding: 1.25rem 2rem 1.75rem;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 0.75rem; flex-shrink: 0;
+  }
+  .btn-sub-ghost {
+    flex: 1; padding: 0.75rem 1rem; border-radius: 10px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-secondary); font-weight: 600; font-size: 0.88rem;
+    cursor: pointer; font-family: inherit; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  }
+  .btn-sub-ghost:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-sub-wa {
+    flex: 1; padding: 0.75rem 1rem; border-radius: 10px;
+    border: 1px solid rgba(37,211,102,0.3); background: rgba(37,211,102,0.08);
+    color: #25D366; font-weight: 600; font-size: 0.88rem;
+    cursor: pointer; font-family: inherit; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  }
+  .btn-sub-wa:hover { background: rgba(37,211,102,0.15); border-color: rgba(37,211,102,0.5); }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .anim-spin { animation: spin 1s linear infinite; }
+
+  @media (max-width: 768px) {
+    .hero { flex-direction: column; padding-top: 100px; gap: 2rem; text-align: center; }
+    .hero-title { font-size: 2.5rem; }
+    .hero-desc { margin: 0 auto 2rem; }
+    .hero-buttons { justify-content: center; }
+    .nav-links { gap: 0.75rem; }
+    .nav-links a { font-size: 0.85rem; }
+    .section-header h2 { font-size: 2rem; }
+    .sub-modal-header, .sub-modal-body, .sub-modal-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .sub-code-input-wrap { flex-direction: column; }
+    .sub-modal-footer { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+    <span>EquivaPath</span>
+  </div>
+  <div class="nav-links">
+    <a href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+    <a href="register.html"><i class="fa-solid fa-user-plus"></i> Register</a>
+    <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════
+     Subscription Modal
+     ═══════════════════════════════════ -->
+<div class="sub-overlay" id="subOverlay">
+  <div class="sub-modal">
+    <div class="sub-modal-header">
+      <div class="sub-modal-icon"><i class="fa-solid fa-crown"></i></div>
+      <h2>Activate Subscription</h2>
+      <p>Enter your activation code to unlock full access to all study materials, quizzes, and features.</p>
+      <button class="sub-modal-close" id="subClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sub-modal-body">
+      <!-- Status -->
+      <div class="sub-status inactive" id="subStatus">
+        <div class="sub-status-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="sub-status-text">
+          <h4 id="subStatusTitle">Subscription Inactive</h4>
+          <p id="subStatusDesc">Enter your activation code below to unlock all features.</p>
+        </div>
+      </div>
+
+      <!-- Code Input -->
+      <div class="sub-code-section">
+        <h4><i class="fa-solid fa-key"></i> Activation Code</h4>
+        <div class="sub-code-input-wrap">
+          <input type="text" id="subCodeInput" class="sub-code-input" placeholder="XXXX-XXXX-XXXX" maxlength="14" autocomplete="off">
+          <button class="btn-activate" id="btnActivate" onclick="activateSubscription()">
+            <i class="fa-solid fa-bolt"></i> Activate
+          </button>
+        </div>
+        <div class="sub-code-error" id="subCodeError">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="subCodeErrorText">Invalid code. Please check and try again.</span>
+        </div>
+      </div>
+
+      <!-- Benefits -->
+      <div class="sub-benefits">
+        <h4><i class="fa-solid fa-gift"></i> What You Get</h4>
+        <ul class="sub-benefits-list">
+          <li><i class="fa-solid fa-circle"></i> <strong>Full access</strong> to all study materials and PDFs</li>
+          <li><i class="fa-solid fa-circle"></i> <strong>Unlimited quizzes</strong> with detailed explanations</li>
+          
+          <li><i class="fa-solid fa-circle"></i> <strong>Progress tracking</strong> and performance analytics</li>
+          <li><i class="fa-solid fa-circle"></i> <strong>Priority support</strong> via WhatsApp and email</li>
+          <li><i class="fa-solid fa-circle"></i> <strong>Early access</strong> to new subjects and features</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sub-modal-footer">
+      <button class="btn-sub-ghost" onclick="closeSubModal()">
+        <i class="fa-solid fa-arrow-left"></i> Close
+      </button>
+      <a href="https://wa.me/201032626508?text=Hello%2C%20I%20want%20to%20get%20an%20activation%20code%20for%20EquivaPath" target="_blank" class="btn-sub-wa">
+        <i class="fa-brands fa-whatsapp"></i> Get Code via WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <i class="fa-solid fa-bolt"></i> Educational Equivalency Platform
+    </div>
+    <h1 class="hero-title">Your Path to <span>Equivalency</span> Starts Here</h1>
+    <p class="hero-desc">
+      EquivaPath helps diploma holders understand the equivalency system, check their eligibility,
+      choose the right college, access study materials, and track their progress — all in one place.
+    </p>
+    <div class="hero-buttons">
+      <a href="eligibility.html" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-clipboard-check"></i> Check Eligibility
+      </a>
+      <button class="btn btn-subscribe btn-lg" onclick="openSubModal()">
+        <i class="fa-solid fa-crown"></i> Activate Subscription <span class="sub-badge">New</span>
+      </button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="video-placeholder">
+      <video id="heroVideo" src="index.mp4" preload="metadata"></video>
+      <div class="play-icon" id="playBtn">
+        <i class="fa-solid fa-play"></i>
+      </div>
+      <span>Watch How It Works</span>
+    </div>
+  </div>
+</section>
+
+<section class="steps-section" id="features">
+  <div class="section-header" id="how-it-works">
+    <h2>How It Works</h2>
+    <p>Follow these simple steps to start your equivalency journey</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-number"><i class="fa-solid fa-clipboard-check"></i></div>
+      <h3>Check Eligibility</h3>
+      <p>Enter your diploma details and instantly find out which programs you qualify for.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-number"><i class="fa-solid fa-building-columns"></i></div>
+      <h3>Choose College</h3>
+      <p>Select between Engineering or Computers based on your eligibility and interests.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-number"><i class="fa-solid fa-book-open-reader"></i></div>
+      <h3>Study Materials</h3>
+      <p>Access PDFs, video lectures, and question banks for every subject in your program.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-number"><i class="fa-solid fa-trophy"></i></div>
+      <h3>Take Quizzes</h3>
+      <p>Test your knowledge with MCQ quizzes and track your progress towards completion.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="section-header">
+    <h2>Get In Touch</h2>
+    <p>Have questions about the equivalency process? Send us a message.</p>
+  </div>
+  <div class="contact-form">
+    <form id="contactForm">
+      <div class="form-group">
+        <label for="contactName"><i class="fa-solid fa-user"></i> Your Name</label>
+        <input type="text" id="contactName" name="user_name" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group">
+        <label for="contactEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
+        <input type="email" id="contactEmail" name="user_email" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group">
+        <label for="contactMsg"><i class="fa-solid fa-comment-dots"></i> Message</label>
+        <textarea id="contactMsg" name="message" placeholder="Write your message..." required></textarea>
+      </div>
+      <button type="submit" id="contactSubmitBtn" class="btn btn-primary btn-full">
+        <i class="fa-solid fa-paper-plane"></i> Send Message
+      </button>
+      <div class="form-msg" id="contactMsgBox"></div>
+    </form>
+  </div>
+</section>
+
+<footer class="new-footer">
+  <div class="footer-container">
+    <div class="footer-col">
+      <div class="footer-brand-logo">
+        <div class="footer-logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <span>EquivaPath</span>
+      </div>
+      <p>Helping Egyptian technical diploma students achieve their equivalency goals.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Video</a></li>
+        <li><a href="#how-it-works"><i class="fa-solid fa-chevron-right"></i> How It Works</a></li>
+        <li><a href="#contact"><i class="fa-solid fa-chevron-right"></i> Contact</a></li>
+        <li><a href="eligibility.html"><i class="fa-solid fa-chevron-right"></i> Check Eligibility</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="faq.html"><i class="fa-solid fa-chevron-right"></i> FAQ</a></li>
+        <li><a href="#contact"><i class="fa-solid fa-chevron-right"></i> Contact Us</a></li>
+        <li><a href="help-center.html"><i class="fa-solid fa-chevron-right"></i> Help Center</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <div class="social-links">
+        <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="social-link"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="social-link"><i class="fa-brands fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 EquivaPath. All rights reserved.</p>
+  </div>
+</footer>
+
+<a href="https://wa.me/201032626508" target="_blank" class="whatsapp-float" aria-label="Contact us on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<script>
+/* ═══ EmailJS Init ═══ */
+emailjs.init("bkUlUZF8TH-hNo-0C");
+
+/* ═══ Video ═══ */
+var video = document.getElementById('heroVideo');
+var playBtn = document.getElementById('playBtn');
+var playIcon = playBtn.querySelector('i');
+
+playBtn.addEventListener('click', function() {
+  if (video.paused) {
+    video.play();
+    playIcon.classList.remove('fa-play');
+    playIcon.classList.add('fa-pause');
+  } else {
+    video.pause();
+    playIcon.classList.remove('fa-pause');
+    playIcon.classList.add('fa-play');
+  }
+});
+
+video.addEventListener('ended', function() {
+  playIcon.classList.remove('fa-pause');
+  playIcon.classList.add('fa-play');
+});
+
+/* ═══ Toast ═══ */
+function showToast(message, type) {
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  var icon = type === 'success' ? 'fa-circle-check' : type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-exclamation';
+  toast.className = 'toast ' + type;
+  toast.innerHTML = '<i class="fa-solid ' + icon + '"></i> ' + message;
+  container.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 4000);
+}
+
+/* ═══ Contact Form — EmailJS ═══ */
+var contactForm = document.getElementById('contactForm');
+var contactBtn = document.getElementById('contactSubmitBtn');
+var contactMsgBox = document.getElementById('contactMsgBox');
+var originalBtnHTML = contactBtn.innerHTML;
+
+contactForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  /* Loading state */
+  contactBtn.innerHTML = '<i class="fa-solid fa-spinner anim-spin"></i> Sending...';
+  contactBtn.disabled = true;
+  contactBtn.style.opacity = '0.7';
+  contactMsgBox.className = 'form-msg';
+  contactMsgBox.textContent = '';
+
+  emailjs.sendForm('service_mca5ysq', 'template_my7s33n', contactForm)
+    .then(function() {
+      contactMsgBox.className = 'form-msg success';
+      contactMsgBox.textContent = '✓ Message sent successfully! We\'ll get back to you soon.';
+      showToast('Message sent successfully!', 'success');
+      contactForm.reset();
+    })
+    .catch(function(err) {
+      contactMsgBox.className = 'form-msg error';
+      contactMsgBox.textContent = '✗ Failed to send message. Please try again or contact us via WhatsApp.';
+      showToast('Failed to send message', 'error');
+      console.error('EmailJS Error:', err);
+    })
+    .finally(function() {
+      contactBtn.innerHTML = originalBtnHTML;
+      contactBtn.disabled = false;
+      contactBtn.style.opacity = '1';
+    });
+});
+
+/* ═══════════════════════════════════════
+   Subscription Modal Logic
+   ═══════════════════════════════════════ */
+
+function openSubModal() {
+  document.getElementById('subOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  checkSubscriptionStatus();
+  document.getElementById('subCodeInput').value = '';
+  document.getElementById('subCodeInput').className = 'sub-code-input';
+  document.getElementById('subCodeError').classList.remove('show');
+}
+
+function closeSubModal() {
+  document.getElementById('subOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('subClose').addEventListener('click', closeSubModal);
+document.getElementById('subOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeSubModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSubModal();
+});
+
+/* Auto-format code input (XXXX-XXXX-XXXX) */
+document.getElementById('subCodeInput').addEventListener('input', function(e) {
+  var val = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+  var formatted = '';
+  for (var i = 0; i < val.length && i < 12; i++) {
+    if (i > 0 && i % 4 === 0) formatted += '-';
+    formatted += val[i];
+  }
+  this.value = formatted;
+
+  /* Clear error state on typing */
+  this.className = 'sub-code-input';
+  document.getElementById('subCodeError').classList.remove('show');
+});
+
+/* Enter key to activate */
+document.getElementById('subCodeInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    activateSubscription();
+  }
+});
+
+/* Check current subscription status */
+function checkSubscriptionStatus() {
+  var statusEl = document.getElementById('subStatus');
+  var titleEl = document.getElementById('subStatusTitle');
+  var descEl = document.getElementById('subStatusDesc');
+  var iconEl = statusEl.querySelector('.sub-status-icon i');
+
+  var token = localStorage.getItem('equivapath_token') || '';
+  var subData = null;
+
+  try {
+    subData = JSON.parse(localStorage.getItem('equivapath_subscription') || 'null');
+  } catch(e) {}
+
+  if (subData && subData.active) {
+    statusEl.className = 'sub-status active';
+    iconEl.className = 'fa-solid fa-circle-check';
+    titleEl.textContent = 'Subscription Active';
+    var expiry = subData.expiresAt ? new Date(subData.expiresAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unlimited';
+    descEl.textContent = 'Valid until ' + expiry + '. Enjoy full access!';
+  } else if (subData && subData.pending) {
+    statusEl.className = 'sub-status pending';
+    iconEl.className = 'fa-solid fa-clock';
+    titleEl.textContent = 'Activation Pending';
+    descEl.textContent = 'Your code is being verified. Please wait or contact support.';
+  } else {
+    statusEl.className = 'sub-status inactive';
+    iconEl.className = 'fa-solid fa-circle-xmark';
+    titleEl.textContent = 'Subscription Inactive';
+    descEl.textContent = 'Enter your activation code below to unlock all features.';
+  }
+}
+
+/* Activate subscription */
+function activateSubscription() {
+  var input = document.getElementById('subCodeInput');
+  var errorEl = document.getElementById('subCodeError');
+  var errorTextEl = document.getElementById('subCodeErrorText');
+  var btn = document.getElementById('btnActivate');
+  var code = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
+  /* Validate format */
+  if (code.length < 12) {
+    input.className = 'sub-code-input error';
+    errorTextEl.textContent = 'Code must be 12 characters (XXXX-XXXX-XXXX).';
+    errorEl.classList.add('show');
+    input.focus();
+    return;
+  }
+
+  /* Disable button */
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+  input.className = 'sub-code-input';
+
+  /* Simulate API call */
+  setTimeout(function() {
+    /* For demo: accept codes starting with "TEST" or "EQUIV" */
+    var isValid = code.startsWith('TEST') || code.startsWith('EQUIV') || code === 'DEMO12345678';
+
+    if (isValid) {
+      /* Success */
+      input.className = 'sub-code-input success';
+      errorEl.classList.remove('show');
+
+      /* Save to localStorage */
+      var expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+
+      localStorage.setItem('equivapath_subscription', JSON.stringify({
+        active: true,
+        code: code,
+        activatedAt: new Date().toISOString(),
+        expiresAt: expiryDate.toISOString()
+      }));
+
+      /* Update UI */
+      checkSubscriptionStatus();
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Activated!';
+      btn.disabled = true;
+      btn.style.background = 'linear-gradient(135deg, var(--success), #16a34a)';
+      btn.style.color = '#fff';
+
+      showToast('Subscription activated successfully!', 'success');
+
+      /* Reset button after delay */
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Activate';
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 3000);
+    } else {
+      /* Failure */
+      input.className = 'sub-code-input error';
+      errorTextEl.textContent = 'Invalid activation code. Please check and try again.';
+      errorEl.classList.add('show');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Activate';
+      showToast('Invalid activation code', 'error');
+    }
+  }, 1500);
+}
+</script>
+
+</body>
+</html>
